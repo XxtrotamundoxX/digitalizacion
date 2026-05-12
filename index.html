@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digitalización — Infografía Interactiva</title>
+<meta name="author" content="Jeremy Rodriguez Arteaga">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --midnight: #141414;
+  --ghost: #fdf9f0;
+  --lime: #c7ff69;
+  --amethyst: #7a78ff;
+  --orange: #ff6d38;
+  --emerald: #00a652;
+  --blue: #478bff;
+  --gold: #ffc412;
+  --lavender: #ccccff;
+  --r1: var(--lime);
+  --r2: var(--amethyst);
+  --r3: var(--blue);
+  --r4: var(--orange);
+  --r5: var(--gold);
+  --r6: var(--emerald);
+  --font-d: 'Bebas Neue', sans-serif;
+  --font-b: 'Inter', sans-serif;
+  --rc: 43px;
+  --rb: 25px;
+  --rp: 1000px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--midnight);
+  color: var(--ghost);
+  font-family: var(--font-b);
+  overflow-x: hidden;
+}
+
+/* SCROLL PROGRESS */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--lime), var(--amethyst), var(--blue), var(--orange), var(--gold), var(--emerald));
+  z-index: 200;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 3px; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(20,20,20,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(253,249,240,0.07);
+  padding: 13px 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-logo {
+  font-family: var(--font-d);
+  font-size: 18px;
+  color: var(--ghost);
+  letter-spacing: 0.06em;
+  margin-right: 24px;
+}
+.nav-logo span { color: var(--lime); }
+
+.nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.nav-a {
+  padding: 5px 14px;
+  border-radius: var(--rp);
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  transition: all 0.25s ease;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.nav-a:hover { border-color: currentColor; background: rgba(255,255,255,0.04); }
+.na1 { color: var(--lime); }
+.na2 { color: var(--amethyst); }
+.na3 { color: var(--blue); }
+.na4 { color: var(--orange); }
+.na5 { color: var(--gold); }
+.na6 { color: var(--emerald); }
+
+/* SIDE DOTS */
+.side-nav {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 99;
+}
+.side-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(253,249,240,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  display: block;
+}
+.side-dot.active { transform: scale(1.6); }
+.side-dot[data-ra="0"] { background: rgba(253,249,240,0.3); }
+.side-dot[data-ra="1"].active { background: var(--lime); }
+.side-dot[data-ra="2"].active { background: var(--amethyst); }
+.side-dot[data-ra="3"].active { background: var(--blue); }
+.side-dot[data-ra="4"].active { background: var(--orange); }
+.side-dot[data-ra="5"].active { background: var(--gold); }
+.side-dot[data-ra="6"].active { background: var(--emerald); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 40px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.12;
+}
+.orb1 { width: 600px; height: 600px; background: var(--lime); top: -100px; left: -200px; animation: drift 12s ease-in-out infinite; }
+.orb2 { width: 400px; height: 400px; background: var(--amethyst); bottom: -100px; right: -100px; animation: drift 10s 2s ease-in-out infinite reverse; }
+.orb3 { width: 300px; height: 300px; background: var(--blue); top: 50%; left: 60%; animation: drift 14s 4s ease-in-out infinite; }
+
+@keyframes drift {
+  0%, 100% { transform: translate(0,0); }
+  33% { transform: translate(30px, -40px); }
+  66% { transform: translate(-20px, 20px); }
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 6px 20px;
+  border: 1.5px solid var(--lime);
+  border-radius: var(--rp);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--lime);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  animation: fadeUp 0.9s ease both;
+}
+
+.hero-h1 {
+  font-family: var(--font-d);
+  font-size: clamp(70px, 12vw, 150px);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  color: var(--ghost);
+  margin-bottom: 8px;
+  animation: fadeUp 0.9s 0.15s ease both;
+}
+
+.hero-h2 {
+  font-family: var(--font-d);
+  font-size: clamp(28px, 5vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: rgba(253,249,240,0.3);
+  margin-bottom: 36px;
+  animation: fadeUp 0.9s 0.3s ease both;
+}
+
+.hero-desc {
+  font-size: 16px;
+  color: rgba(253,249,240,0.5);
+  max-width: 480px;
+  line-height: 1.6;
+  margin-bottom: 56px;
+  animation: fadeUp 0.9s 0.45s ease both;
+}
+
+.hero-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.9s 0.6s ease both;
+}
+.hp {
+  padding: 10px 22px;
+  border-radius: var(--rp);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: var(--midnight);
+}
+.hp:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+.hp1 { background: var(--lime); }
+.hp2 { background: var(--amethyst); color: var(--ghost); }
+.hp3 { background: var(--blue); color: var(--ghost); }
+.hp4 { background: var(--orange); color: var(--ghost); }
+.hp5 { background: var(--gold); }
+.hp6 { background: var(--emerald); color: var(--ghost); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: fadeUp 0.9s 0.9s ease both;
+}
+.scroll-hint span {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(253,249,240,0.3);
+}
+.scroll-arrow {
+  width: 20px; height: 30px;
+  border: 1.5px solid rgba(253,249,240,0.2);
+  border-radius: 10px;
+  position: relative;
+}
+.scroll-arrow::after {
+  content: '';
+  position: absolute;
+  width: 4px; height: 8px;
+  background: rgba(253,249,240,0.4);
+  border-radius: 2px;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%);
+  animation: scrollDown 1.5s ease-in-out infinite;
+}
+@keyframes scrollDown {
+  0% { opacity: 1; top: 5px; }
+  100% { opacity: 0; top: 16px; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ──── RA SECTIONS ──── */
+.ra-section {
+  padding: 110px 60px 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ra-inner { max-width: 1160px; margin: 0 auto; }
+
+/* bg-num — ahora estático, sin parallax */
+.bg-num {
+  position: absolute;
+  font-family: var(--font-d);
+  font-size: clamp(140px, 22vw, 260px);
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  top: 40px; right: -20px;
+  z-index: 0;
+  opacity: 0.06;
+  user-select: none;
+}
+
+.s-header { position: relative; z-index: 1; margin-bottom: 56px; }
+
+.s-tag {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: var(--rp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  color: var(--midnight);
+}
+
+.s-title {
+  font-family: var(--font-d);
+  font-size: clamp(36px, 6vw, 78px);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  color: var(--ghost);
+  max-width: 700px;
+}
+
+.s-sub {
+  font-size: 15px;
+  color: rgba(253,249,240,0.45);
+  margin-top: 16px;
+  max-width: 560px;
+  line-height: 1.5;
+}
+
+/* ──── SUBSECTION DIVIDER ──── */
+.sub-div {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 60px 0 32px;
+  position: relative;
+  z-index: 1;
+}
+.sub-div-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(253,249,240,0.08);
+}
+.sub-div-label {
+  font-family: var(--font-d);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.28;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Grid layouts */
+.g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+/* Base card */
+.card {
+  background: rgba(253,249,240,0.03);
+  border: 1.5px solid rgba(253,249,240,0.09);
+  border-radius: var(--rc);
+  padding: 30px;
+  position: relative;
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  z-index: 1;
+}
+.card:hover {
+  transform: translateY(-5px);
+  background: rgba(253,249,240,0.06);
+}
+
+.card-ico { font-size: 36px; display: block; margin-bottom: 16px; }
+.card-lbl {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; opacity: 0.5; margin-bottom: 6px;
+}
+.card-h {
+  font-family: var(--font-d);
+  font-size: 24px; letter-spacing: -0.02em; line-height: 1;
+  color: var(--ghost); margin-bottom: 10px;
+}
+.card-p {
+  font-size: 13px; line-height: 1.6;
+  color: rgba(253,249,240,0.58);
+}
+
+/* accent card */
+.card-filled { color: var(--midnight) !important; }
+.card-filled .card-p { color: rgba(20,20,20,0.65) !important; }
+.card-filled .card-h { color: var(--midnight) !important; }
+.card-filled .card-lbl { color: rgba(20,20,20,0.5) !important; }
+
+/* bordered accent */
+.card-accent-border { border-width: 2px; }
+
+/* Flow steps */
+.flow {
+  display: flex; align-items: stretch; gap: 0;
+  margin: 36px 0; position: relative; z-index: 1;
+}
+.flow-step {
+  flex: 1; padding: 28px 24px;
+  border-radius: 30px;
+  background: rgba(253,249,240,0.04);
+  border: 1.5px solid rgba(253,249,240,0.09);
+  text-align: center;
+  transition: transform 0.3s;
+}
+.flow-step:hover { transform: translateY(-4px); }
+.flow-arr {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 10px; font-size: 20px;
+  color: rgba(253,249,240,0.25); flex-shrink: 0;
+}
+.fs-ico { font-size: 30px; display: block; margin-bottom: 12px; }
+.fs-h { font-family: var(--font-d); font-size: 20px; letter-spacing: -0.02em; margin-bottom: 8px; }
+.fs-p { font-size: 12px; color: rgba(253,249,240,0.5); line-height: 1.5; }
+
+/* Comparison */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 32px 0; z-index: 1; position: relative; }
+.cmp-side { border-radius: var(--rc); padding: 32px; border: 1.5px solid rgba(253,249,240,0.09); }
+.cmp-title { font-family: var(--font-d); font-size: 30px; letter-spacing: -0.02em; margin-bottom: 20px; }
+.cmp-list { list-style: none; }
+.cmp-list li {
+  padding: 9px 0; font-size: 13px; color: rgba(253,249,240,0.65);
+  border-bottom: 1px solid rgba(253,249,240,0.06);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;
+}
+.cmp-list li span { flex-shrink: 0; font-size: 16px; }
+
+/* ODS block */
+.ods-wrap { margin-top: 60px; position: relative; z-index: 1; }
+.ods-label {
+  font-family: var(--font-d); font-size: 20px; letter-spacing: -0.02em;
+  opacity: 0.5; margin-bottom: 20px;
+}
+.ods-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.ods-c {
+  border-radius: 30px; padding: 26px 22px;
+  border: 1.5px solid rgba(253,249,240,0.08);
+  background: rgba(253,249,240,0.03);
+  transition: transform 0.3s;
+}
+.ods-c:hover { transform: translateY(-4px); }
+.ods-num { font-family: var(--font-d); font-size: 56px; line-height: 0.85; letter-spacing: -0.04em; display: block; margin-bottom: 6px; }
+.ods-name { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; display: block; }
+.ods-txt { font-size: 12px; line-height: 1.5; color: rgba(253,249,240,0.55); }
+
+/* Tech cards RA2 */
+.tech-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.tc {
+  border-radius: 36px; padding: 28px 20px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 12px;
+  transition: transform 0.3s ease;
+  cursor: default;
+  border: 1.5px solid transparent;
+  min-height: 150px;
+}
+.tc:hover { transform: scale(1.05); }
+.tc-ico { font-size: 38px; }
+.tc-h { font-family: var(--font-d); font-size: 17px; letter-spacing: -0.01em; color: var(--midnight); }
+.tc-p { font-size: 11px; color: rgba(20,20,20,0.6); line-height: 1.4; }
+
+/* Cloud pyramid RA3 */
+.pyramid-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 36px auto; max-width: 700px; }
+.pl {
+  border-radius: 22px; padding: 22px 36px; text-align: center;
+  transition: transform 0.3s; cursor: default;
+}
+.pl:hover { transform: scaleX(1.03); }
+.pl-title { font-family: var(--font-d); font-size: 22px; letter-spacing: -0.02em; }
+.pl-sub { font-size: 12px; margin-top: 4px; opacity: 0.75; }
+.pl-w1 { width: 100%; }
+.pl-w2 { width: 78%; }
+.pl-w3 { width: 56%; }
+.pl-w4 { width: 38%; }
+
+/* AI ecosystem RA4 */
+.ai-eco {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  position: relative; margin: 40px 0;
+}
+.ai-ring {
+  width: 100%; max-width: 680px; padding: 30px 40px;
+  border-radius: 50px; text-align: center;
+  position: relative; transition: transform 0.3s;
+}
+.ai-ring:hover { transform: scaleX(1.02); }
+.ai-ring-title { font-family: var(--font-d); font-size: 28px; letter-spacing: -0.02em; }
+.ai-ring-sub { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+.ai-r1 { max-width: 100%; }
+.ai-r2 { max-width: 84%; }
+.ai-r3 { max-width: 68%; }
+.ai-r4 { max-width: 52%; }
+
+/* Big Data Vs RA5 */
+.vs-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 13px; }
+.vc {
+  border-radius: 28px; padding: 26px 16px; text-align: center;
+  border: 1.5px solid rgba(253,249,240,0.09);
+  background: rgba(253,249,240,0.03);
+  transition: transform 0.3s;
+}
+.vc:hover { transform: translateY(-5px); }
+.vc-l { font-family: var(--font-d); font-size: 68px; line-height: 0.85; letter-spacing: -0.04em; display: block; margin-bottom: 6px; }
+.vc-n { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; margin-bottom: 8px; display: block; }
+.vc-t { font-size: 12px; line-height: 1.4; color: rgba(253,249,240,0.55); }
+
+/* CID triad */
+.cid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 32px 0; }
+.cid-c {
+  border-radius: var(--rc); padding: 36px 28px; text-align: center;
+  background: rgba(253,249,240,0.04);
+  border: 1.5px solid rgba(253,249,240,0.09);
+  transition: transform 0.3s;
+}
+.cid-c:hover { transform: translateY(-4px); }
+.cid-letter { font-family: var(--font-d); font-size: 80px; line-height: 0.85; letter-spacing: -0.04em; display: block; margin-bottom: 10px; }
+.cid-name { font-family: var(--font-d); font-size: 22px; letter-spacing: -0.02em; margin-bottom: 10px; }
+.cid-p { font-size: 13px; color: rgba(253,249,240,0.55); line-height: 1.5; }
+
+/* Project RA6 */
+.proj-steps { display: flex; flex-direction: column; gap: 14px; }
+.ps {
+  display: flex; gap: 24px; align-items: flex-start;
+  padding: 28px 30px; border-radius: 32px;
+  border: 1.5px solid rgba(253,249,240,0.08);
+  background: rgba(253,249,240,0.03);
+  transition: transform 0.3s;
+}
+.ps:hover { transform: translateX(10px); }
+.ps-num {
+  font-family: var(--font-d); font-size: 52px;
+  line-height: 0.85; letter-spacing: -0.04em; flex-shrink: 0;
+  opacity: 0.35;
+}
+.ps-body { flex: 1; }
+.ps-title { font-family: var(--font-d); font-size: 26px; letter-spacing: -0.02em; margin-bottom: 6px; }
+.ps-text { font-size: 13px; color: rgba(253,249,240,0.58); line-height: 1.5; }
+
+/* Language chips */
+.langs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.lang-chip {
+  padding: 8px 20px; border-radius: var(--rp);
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1.5px solid;
+  transition: transform 0.2s;
+}
+.lang-chip:hover { transform: translateY(-2px); }
+
+/* Section separator */
+.sep {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(253,249,240,0.1), transparent);
+  margin: 0;
+}
+
+/* Reveal animation */
+.rev {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.rev.in { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.08s; }
+.d2 { transition-delay: 0.16s; }
+.d3 { transition-delay: 0.24s; }
+.d4 { transition-delay: 0.32s; }
+.d5 { transition-delay: 0.40s; }
+.d6 { transition-delay: 0.48s; }
+.d7 { transition-delay: 0.56s; }
+.d8 { transition-delay: 0.64s; }
+
+/* Pulse dot */
+.pulse {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%; vertical-align: middle; margin-right: 6px;
+  animation: pulse-anim 2s ease-in-out infinite;
+}
+@keyframes pulse-anim {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.6; }
+}
+
+/* FOOTER */
+footer {
+  background: rgba(253,249,240,0.02);
+  border-top: 1px solid rgba(253,249,240,0.07);
+  padding: 48px 60px;
+  text-align: center;
+}
+.footer-logo { font-family: var(--font-d); font-size: 32px; letter-spacing: -0.02em; margin-bottom: 10px; }
+.footer-logo span { color: var(--lime); }
+.footer-sub { font-size: 13px; color: rgba(253,249,240,0.35); }
+
+/* RA accent utilities */
+.accent-lime { border-color: rgba(199,255,105,0.25) !important; }
+.accent-amethyst { border-color: rgba(122,120,255,0.3) !important; }
+.accent-blue { border-color: rgba(71,139,255,0.3) !important; }
+.accent-orange { border-color: rgba(255,109,56,0.3) !important; }
+.accent-gold { border-color: rgba(255,196,18,0.3) !important; }
+.accent-emerald { border-color: rgba(0,166,82,0.3) !important; }
+.bg-accent-lime { background: rgba(199,255,105,0.04) !important; }
+.bg-accent-amethyst { background: rgba(122,120,255,0.04) !important; }
+.bg-accent-blue { background: rgba(71,139,255,0.04) !important; }
+.bg-accent-orange { background: rgba(255,109,56,0.04) !important; }
+.bg-accent-gold { background: rgba(255,196,18,0.04) !important; }
+.bg-accent-emerald { background: rgba(0,166,82,0.04) !important; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ra-section { padding: 80px 28px 70px; }
+  .g2,.g3,.g4 { grid-template-columns: 1fr; }
+  .tech-grid { grid-template-columns: repeat(2,1fr); }
+  .ods-grid { grid-template-columns: repeat(2,1fr); }
+  .vs-grid { grid-template-columns: repeat(2,1fr); }
+  .cmp { grid-template-columns: 1fr; }
+  .cid { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow-arr { transform: rotate(90deg); height: 20px; }
+  .pyramid-wrap .pl { width: 100% !important; }
+  .ai-ring { max-width: 100% !important; }
+  nav { padding: 10px 20px; }
+  .nav-links { gap: 2px; }
+  .nav-a { padding: 4px 10px; font-size: 10px; }
+  .side-nav { display: none; }
+  .bg-num { display: none; }
+  footer { padding: 40px 28px; }
+  .sub-div { margin: 40px 0 24px; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- SIDE DOTS -->
+<nav-side class="side-nav">
+  <button class="side-dot active" data-ra="0" onclick="scrollToId('hero')" title="Inicio"></button>
+  <button class="side-dot" data-ra="1" onclick="scrollToId('ra1')" title="RA1"></button>
+  <button class="side-dot" data-ra="2" onclick="scrollToId('ra2')" title="RA2"></button>
+  <button class="side-dot" data-ra="3" onclick="scrollToId('ra3')" title="RA3"></button>
+  <button class="side-dot" data-ra="4" onclick="scrollToId('ra4')" title="RA4"></button>
+  <button class="side-dot" data-ra="5" onclick="scrollToId('ra5')" title="RA5"></button>
+  <button class="side-dot" data-ra="6" onclick="scrollToId('ra6')" title="RA6"></button>
+</nav-side>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">DIGITAL</span>
+  <div class="nav-links">
+    <a href="#ra1" class="nav-a na1">RA1 · Digitalización</a>
+    <a href="#ra2" class="nav-a na2">RA2 · THD</a>
+    <a href="#ra3" class="nav-a na3">RA3 · Cloud</a>
+    <a href="#ra4" class="nav-a na4">RA4 · IA</a>
+    <a href="#ra5" class="nav-a na5">RA5 · Datos</a>
+    <a href="#ra6" class="nav-a na6">RA6 · Proyecto</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero" data-section="0">
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-orb orb3"></div>
+  <span class="hero-badge">✦ Asignatura · ASIR · 2024/25</span>
+  <h1 class="hero-h1">DIGITALIZACIÓN</h1>
+  <h2 class="hero-h2">Infografía Interactiva</h2>
+  <p class="hero-desc">Repaso completo de los 6 Resultados de Aprendizaje. Navega por cada RA o desplázate para explorar todos los contenidos.</p>
+  <div class="hero-pills">
+    <a href="#ra1" class="hp hp1">RA1</a>
+    <a href="#ra2" class="hp hp2">RA2</a>
+    <a href="#ra3" class="hp hp3">RA3</a>
+    <a href="#ra4" class="hp hp4">RA4</a>
+    <a href="#ra5" class="hp hp5">RA5</a>
+    <a href="#ra6" class="hp hp6">RA6</a>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RA1 — Digitalización, IT/OT, ODS      -->
+<!-- ══════════════════════════════════════ -->
+<section class="ra-section" id="ra1" data-section="1">
+  <div class="bg-num" style="color:var(--lime)">RA1</div>
+  <div class="ra-inner">
+
+    <div class="s-header rev">
+      <span class="s-tag" style="background:var(--lime)">RA1</span>
+      <h2 class="s-title">Digitalización,<br>IT/OT &amp; Sostenibilidad</h2>
+      <p class="s-sub">De la información analógica a la transformación total del modelo de negocio. Conectando el mundo físico con el digital.</p>
+    </div>
+
+    <!-- SUBSECCIÓN 1: LAS 3 FASES -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Las 3 Fases de la Era Digital</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="flow rev d1">
+      <div class="flow-step">
+        <span class="fs-ico">📋</span>
+        <div class="fs-h" style="color:var(--lime)">Informatización</div>
+        <div class="fs-p">Convertir información analógica a digital. De papel a bases de datos.</div>
+      </div>
+      <div class="flow-arr">→</div>
+      <div class="flow-step">
+        <span class="fs-ico">⚙️</span>
+        <div class="fs-h" style="color:var(--lime)">Digitalización</div>
+        <div class="fs-p">Usar tecnología para mejorar y automatizar procesos existentes.</div>
+      </div>
+      <div class="flow-arr">→</div>
+      <div class="flow-step">
+        <span class="fs-ico">🚀</span>
+        <div class="fs-h" style="color:var(--lime)">Transformación Digital</div>
+        <div class="fs-p">Cambio total de mentalidad y modelo de negocio apoyado en tecnología.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 2: IT vs OT -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">IT vs OT — Diferencias y Ventajas de su Integración</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="cmp rev d2">
+      <div class="cmp-side accent-lime bg-accent-lime">
+        <div class="cmp-title" style="color:var(--lime)">🖥️ IT</div>
+        <ul class="cmp-list">
+          <li><span>📡</span>Procesamiento de datos corporativos</li>
+          <li><span>🗄️</span>Servidores, redes, bases de datos</li>
+          <li><span>💼</span>Software empresarial (CRM, ERP)</li>
+          <li><span>📊</span>Facilita la toma de decisiones</li>
+          <li><span>🏢</span>Entorno: Oficina / Negocio</li>
+        </ul>
+      </div>
+      <div class="cmp-side accent-lime bg-accent-lime">
+        <div class="cmp-title" style="color:var(--lime)">🏭 OT</div>
+        <ul class="cmp-list">
+          <li><span>🔧</span>Monitoriza procesos físicos e industriales</li>
+          <li><span>⚙️</span>Maquinaria, sensores, actuadores</li>
+          <li><span>🛡️</span>Garantiza seguridad operacional</li>
+          <li><span>⚡</span>Funcionamiento sin interrupciones</li>
+          <li><span>🏗️</span>Entorno: Fábrica / Planta</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="g3 rev d3" style="margin-top:18px">
+      <div class="card accent-lime" style="grid-column: span 3; display:flex; gap:20px; flex-wrap:wrap">
+        <div style="flex:1; min-width:180px">
+          <span class="card-ico">⚡</span>
+          <div class="card-lbl" style="color:var(--lime)">Ventaja IT+OT</div>
+          <div class="card-h">Eficiencia Operativa</div>
+          <div class="card-p">La información fluye automáticamente desde la maquinaria hasta los sistemas de gestión, eliminando trabajo manual.</div>
+        </div>
+        <div style="flex:1; min-width:180px">
+          <span class="card-ico">📡</span>
+          <div class="card-lbl" style="color:var(--lime)">Ventaja IT+OT</div>
+          <div class="card-h">Datos en Tiempo Real</div>
+          <div class="card-p">Estado de la producción y rendimiento de máquinas visible desde oficina en cualquier momento.</div>
+        </div>
+        <div style="flex:1; min-width:180px">
+          <span class="card-ico">🤖</span>
+          <div class="card-lbl" style="color:var(--lime)">Ventaja IT+OT</div>
+          <div class="card-h">Automatización Inteligente</div>
+          <div class="card-p">Mantenimiento predictivo: el sistema detecta fallos y propone soluciones sin supervisión humana.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 3: ECONOMÍA CIRCULAR Y SOSTENIBILIDAD -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Economía Circular y Sostenibilidad</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="cmp rev d4">
+      <div class="cmp-side bg-accent-orange accent-orange">
+        <div class="cmp-title" style="color:#ff6d38">📉 Economía Lineal</div>
+        <ul class="cmp-list">
+          <li><span>🏭</span>Fabricar → Usar → Tirar</li>
+          <li><span>♻️</span>Sin reutilización de recursos</li>
+          <li><span>🌍</span>Agota recursos naturales rápidamente</li>
+          <li><span>🗑️</span>Genera residuos no gestionados</li>
+        </ul>
+      </div>
+      <div class="cmp-side bg-accent-lime accent-lime">
+        <div class="cmp-title" style="color:var(--lime)">🔄 Economía Circular</div>
+        <ul class="cmp-list">
+          <li><span>⬇️</span>Reducir el consumo de recursos</li>
+          <li><span>🔁</span>Reutilizar materiales y componentes</li>
+          <li><span>♻️</span>Reciclar al final del ciclo de vida</li>
+          <li><span>🌱</span>Componentes duran mucho más tiempo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="g2 rev d5" style="margin-top:16px">
+      <div class="card accent-orange">
+        <span class="card-ico">🌡️</span>
+        <div class="card-lbl" style="color:#ff6d38">Impacto negativo</div>
+        <div class="card-h">Huella Digital</div>
+        <div class="card-p">Los Data Centers consumen enormes cantidades de electricidad para funcionar y enfriarse. Los dispositivos obsoletos generan residuos electrónicos.</div>
+      </div>
+      <div class="card accent-lime">
+        <span class="card-ico">🌿</span>
+        <div class="card-lbl" style="color:var(--lime)">Impacto positivo</div>
+        <div class="card-h">Digitalización Sostenible</div>
+        <div class="card-p">Monitorización constante de consumos, automatización que evita errores, menos residuos de materias primas y energía ahorrada.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 4: ODS -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">ODS — Objetivos de Desarrollo Sostenible</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="ods-wrap rev d6" style="margin-top:0">
+      <div class="ods-grid">
+        <div class="ods-c">
+          <span class="ods-num" style="color:var(--orange)">9</span>
+          <span class="ods-name">Industria &amp; Infraestructura</span>
+          <p class="ods-txt">La unión IT+OT crea industrias más modernas, eficientes y seguras.</p>
+        </div>
+        <div class="ods-c">
+          <span class="ods-num" style="color:var(--blue)">11</span>
+          <span class="ods-name">Ciudades Sostenibles</span>
+          <p class="ods-txt">Sensores IoT para movilidad inteligente, alumbrado y gestión de residuos.</p>
+        </div>
+        <div class="ods-c">
+          <span class="ods-num" style="color:var(--gold)">12</span>
+          <span class="ods-name">Consumo Responsable</span>
+          <p class="ods-txt">Control de inventarios, optimización de recursos, evitar sobreproducción.</p>
+        </div>
+        <div class="ods-c">
+          <span class="ods-num" style="color:var(--emerald)">13</span>
+          <span class="ods-name">Acción por el Clima</span>
+          <p class="ods-txt">Medir consumos y emisiones CO₂, optimizar procesos para reducir impacto.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RA2 — THD                             -->
+<!-- ══════════════════════════════════════ -->
+<section class="ra-section" id="ra2" data-section="2" style="background:rgba(122,120,255,0.03)">
+  <div class="bg-num" style="color:var(--amethyst)">RA2</div>
+  <div class="ra-inner">
+
+    <div class="s-header rev">
+      <span class="s-tag" style="background:var(--amethyst); color:var(--ghost)">RA2</span>
+      <h2 class="s-title">Tecnologías<br>Habilitadoras Digitales</h2>
+      <p class="s-sub">El motor de la transformación digital. Conectan el mundo físico con el entorno digital creando sistemas automatizados e inteligentes.</p>
+    </div>
+
+    <!-- SUBSECCIÓN 1: QUÉ SON LAS THD -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Principales THD en el Entorno ASIR</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="tech-grid rev d1">
+      <div class="card accent-amethyst">
+        <span class="card-ico">📡</span>
+        <div class="card-h">IoT</div>
+        <div class="card-p">Sensores conectados que captan datos físicos en tiempo real</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">🤖</span>
+        <div class="card-h">Inteligencia Artificial</div>
+        <div class="card-p">Analiza datos y toma decisiones de forma autónoma</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">📊</span>
+        <div class="card-h">Big Data</div>
+        <div class="card-p">Almacenamiento masivo de millones de datos por segundo</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">🦾</span>
+        <div class="card-h">Robótica</div>
+        <div class="card-p">Automatiza tareas físicas repetitivas o peligrosas</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">📶</span>
+        <div class="card-h">5G</div>
+        <div class="card-p">Red ultrarrápida con latencia casi nula para comunicación instantánea</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">🔗</span>
+        <div class="card-h">Blockchain</div>
+        <div class="card-p">Base de datos descentralizada, inmutable y segura</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">🖨️</span>
+        <div class="card-h">Impresión 3D</div>
+        <div class="card-p">Fabricación de piezas por capas, sin desperdicios</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">🛡️</span>
+        <div class="card-h">Ciberseguridad</div>
+        <div class="card-p">Protege datos e infraestructura frente a ataques</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 2: IMPACTO EMPRESARIAL -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Impacto de las THD en la Empresa</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g3 rev d3">
+      <div class="card accent-amethyst">
+        <span class="card-ico">🏭</span>
+        <div class="card-lbl" style="color:var(--amethyst)">IT + OT</div>
+        <div class="card-h">Productos Inteligentes</div>
+        <div class="card-p">De fabricar productos tradicionales a productos que recopilan datos sobre su propio uso gracias al IoT y Big Data.</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">💼</span>
+        <div class="card-lbl" style="color:var(--amethyst)">Negocio</div>
+        <div class="card-h">Nuevos Mercados</div>
+        <div class="card-p">Servitización: cobrar por horas de uso de una máquina en lugar de venderla. Surgen perfiles como Analistas de Datos o Arquitectos Cloud.</div>
+      </div>
+      <div class="card accent-amethyst">
+        <span class="card-ico">⚡</span>
+        <div class="card-lbl" style="color:var(--amethyst)">Planta</div>
+        <div class="card-h">Cadena Autónoma</div>
+        <div class="card-p">Sensores IoT + 5G + Robótica: montaje funcionando de forma autónoma, coordinada y segura, detectando errores en milisegundos.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 3: ODS RA2 -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">ODS — Objetivos de Desarrollo Sostenible</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="ods-wrap rev d5" style="margin-top:0">
+      <div class="ods-grid">
+        <div class="ods-c" style="border-color:rgba(255,109,56,0.2)">
+          <span class="ods-num" style="color:var(--orange)">9</span>
+          <span class="ods-name">Innovación e Industria</span>
+          <p class="ods-txt">IoT, robótica e IA modernizan fábricas tradicionales hacia la Industria 4.0.</p>
+        </div>
+        <div class="ods-c" style="border-color:rgba(255,196,18,0.2)">
+          <span class="ods-num" style="color:var(--gold)">12</span>
+          <span class="ods-name">Producción Responsable</span>
+          <p class="ods-txt">Big Data + IoT = mantenimiento predictivo, consumo eficiente, sin desperdicios.</p>
+        </div>
+        <div class="ods-c" style="border-color:rgba(0,166,82,0.2)">
+          <span class="ods-num" style="color:var(--emerald)">13</span>
+          <span class="ods-name">Acción por el Clima</span>
+          <p class="ods-txt">IA y Big Data optimizan energía y ayudan a medir la huella de carbono con exactitud.</p>
+        </div>
+        <div class="ods-c" style="border-color:rgba(71,139,255,0.2)">
+          <span class="ods-num" style="color:var(--blue)">11</span>
+          <span class="ods-name">Ciudades Sostenibles</span>
+          <p class="ods-txt">IoT + 5G + AR hacen posible Smart Cities, domótica sostenible y movilidad inteligente.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RA3 — Cloud Computing                 -->
+<!-- ══════════════════════════════════════ -->
+<section class="ra-section" id="ra3" data-section="3">
+  <div class="bg-num" style="color:var(--blue)">RA3</div>
+  <div class="ra-inner">
+
+    <div class="s-header rev">
+      <span class="s-tag" style="background:var(--blue); color:var(--ghost)">RA3</span>
+      <h2 class="s-title">Cloud Computing<br>&amp; Sistemas Conectados</h2>
+      <p class="s-sub">Servicios de computación a través de internet. Sin servidores locales, sin límites. Escalable, disponible y seguro.</p>
+    </div>
+
+    <!-- SUBSECCIÓN 1: MODELOS DE SERVICIO -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Modelos de Servicio en la Nube</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g3 rev d1">
+      <div class="card accent-blue">
+        <span class="card-ico">🖥️</span>
+        <div class="card-lbl" style="color:var(--blue)">Modelo de servicio</div>
+        <div class="card-h">IaaS</div>
+        <div class="card-p"><strong style="color:var(--blue)">Infraestructura como Servicio.</strong> El proveedor alquila hardware virtualizado. El técnico instala lo que necesite. Control total. Ideal para arquitecturas propias.</div>
+      </div>
+      <div class="card accent-blue">
+        <span class="card-ico">🧩</span>
+        <div class="card-lbl" style="color:var(--blue)">Modelo de servicio</div>
+        <div class="card-h">PaaS</div>
+        <div class="card-p"><strong style="color:var(--blue)">Plataforma como Servicio.</strong> Entorno completo listo para desarrollar. Incluye SO y bases de datos. Pensado para programadores.</div>
+      </div>
+      <div class="card accent-blue">
+        <span class="card-ico">🌐</span>
+        <div class="card-lbl" style="color:var(--blue)">Modelo de servicio</div>
+        <div class="card-h">SaaS</div>
+        <div class="card-p"><strong style="color:var(--blue)">Software como Servicio.</strong> Solo necesitas un navegador. El proveedor gestiona todo. Ejemplos: Gmail, Microsoft 365.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 2: TIPOS DE NUBE -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Tipos de Nube — Modelos de Despliegue</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g3 rev d2">
+      <div class="card bg-accent-blue accent-blue">
+        <span class="card-ico">☁️</span>
+        <div class="card-lbl" style="color:var(--blue)">Tipo</div>
+        <div class="card-h">Nube Pública</div>
+        <div class="card-p">AWS, Azure, Google Cloud. Recursos compartidos entre empresas. Económica, sin mantenimiento propio.</div>
+      </div>
+      <div class="card bg-accent-blue accent-blue">
+        <span class="card-ico">🔒</span>
+        <div class="card-lbl" style="color:var(--blue)">Tipo</div>
+        <div class="card-h">Nube Privada</div>
+        <div class="card-p">Infraestructura dedicada exclusivamente a una organización. Máxima privacidad, control y seguridad sobre los datos.</div>
+      </div>
+      <div class="card bg-accent-blue accent-blue">
+        <span class="card-ico">🔀</span>
+        <div class="card-lbl" style="color:var(--blue)">Tipo</div>
+        <div class="card-h">Nube Híbrida</div>
+        <div class="card-p">Datos críticos en nube privada + picos de demanda en pública. Lo mejor de ambos mundos.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 3: JERARQUÍA DE PROCESAMIENTO -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Jerarquía de Procesamiento — Edge, Fog y Mist</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="rev d3">
+      <div class="pyramid-wrap">
+        <div class="pl pl-w4" style="background:var(--blue); color:var(--midnight)">
+          <div class="pl-title">☁️ Cloud Computing</div>
+          <div class="pl-sub" style="color:rgba(20,20,20,0.65)">Miles de km · Procesamiento masivo e histórico</div>
+        </div>
+        <div class="pl pl-w3" style="background:rgba(71,139,255,0.25); border:1.5px solid rgba(71,139,255,0.4)">
+          <div class="pl-title">🌫️ Fog Computing</div>
+          <div class="pl-sub">Router/Gateway local · Filtrado intermedio de datos</div>
+        </div>
+        <div class="pl pl-w2" style="background:rgba(71,139,255,0.12); border:1.5px solid rgba(71,139,255,0.25)">
+          <div class="pl-title">📦 Edge Computing</div>
+          <div class="pl-sub">Dispositivo cercano · Decisiones en tiempo real</div>
+        </div>
+        <div class="pl pl-w1" style="background:rgba(71,139,255,0.06); border:1.5px solid rgba(71,139,255,0.15)">
+          <div class="pl-title">🔬 Mist Computing</div>
+          <div class="pl-sub">Dentro del propio sensor · Cálculo básico en el chip</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 4: VENTAJAS DEL CLOUD -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Ventajas del Cloud Computing</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g4 rev d4">
+      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
+        <span class="card-ico">📈</span>
+        <div class="card-h">Escalabilidad</div>
+        <div class="card-p">Añade servidores con un clic. Crece en Black Friday, reduce en enero.</div>
+      </div>
+      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
+        <span class="card-ico">🌍</span>
+        <div class="card-h">Alta Disponibilidad</div>
+        <div class="card-p">Infraestructura replicada globalmente. Acceso 24/7 desde cualquier lugar.</div>
+      </div>
+      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
+        <span class="card-ico">💰</span>
+        <div class="card-h">Reducción de Costes</div>
+        <div class="card-p">De CAPEX a OPEX. Pagas solo lo que consumes, sin servidores obsoletos.</div>
+      </div>
+      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
+        <span class="card-ico">🛡️</span>
+        <div class="card-h">Seguridad Avanzada</div>
+        <div class="card-p">Backups automáticos, cifrado, 2FA y planes de recuperación ante desastres.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RA4 — Inteligencia Artificial         -->
+<!-- ══════════════════════════════════════ -->
+<section class="ra-section" id="ra4" data-section="4" style="background:rgba(255,109,56,0.03)">
+  <div class="bg-num" style="color:var(--orange)">RA4</div>
+  <div class="ra-inner">
+
+    <div class="s-header rev">
+      <span class="s-tag" style="background:var(--orange); color:var(--ghost)">RA4</span>
+      <h2 class="s-title">Inteligencia Artificial<br>&amp; Automatización</h2>
+      <p class="s-sub">Sistemas capaces de razonar, aprender y tomar decisiones. El cerebro de la transformación digital.</p>
+    </div>
+
+    <!-- SUBSECCIÓN 1: ECOSISTEMA IA -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">IA, Machine Learning y Deep Learning — El Ecosistema</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="ai-eco rev d1">
+      <div class="ai-ring ai-r1" style="background:rgba(255,109,56,0.06); border:1.5px solid rgba(255,109,56,0.2)">
+        <div class="ai-ring-title" style="color:var(--orange)">🌊 Big Data — El Combustible</div>
+        <div class="ai-ring-sub">Inmensa cantidad de datos en bruto que la IA necesita para aprender y operar</div>
+      </div>
+      <div class="ai-ring ai-r2" style="background:rgba(255,109,56,0.1); border:1.5px solid rgba(255,109,56,0.3)">
+        <div class="ai-ring-title" style="color:var(--orange)">🤖 Inteligencia Artificial</div>
+        <div class="ai-ring-sub">Campo que engloba técnicas para imitar el comportamiento humano</div>
+      </div>
+      <div class="ai-ring ai-r3" style="background:rgba(255,109,56,0.15); border:1.5px solid rgba(255,109,56,0.4)">
+        <div class="ai-ring-title" style="color:var(--orange)">📚 Machine Learning</div>
+        <div class="ai-ring-sub">Algoritmos que aprenden de datos por sí solos, sin programación explícita</div>
+      </div>
+      <div class="ai-ring ai-r3" style="background:rgba(255,109,56,0.20); border:1.5px solid rgba(255,109,56,0.5)">
+        <div class="ai-ring-title" style="color:var(--orange)">🧠 Deep Learning</div>
+        <div class="ai-ring-sub">Redes neuronales multicapa. Reconocimiento facial, traducción, conducción autónoma</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 2: LENGUAJES -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Lenguajes de Programación en IA</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="card rev d2" style="border-color:rgba(255,109,56,0.25)">
+      <div class="card-lbl" style="color:var(--orange)">Herramientas del desarrollador IA</div>
+      <div class="card-h">Los 5 Lenguajes Clave</div>
+      <div class="langs">
+        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">🐍 Python <span style="opacity:0.7; font-size:11px">— Rey de la IA · TensorFlow, PyTorch</span></div>
+        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">📊 R <span style="opacity:0.7; font-size:11px">— Estadística y modelos matemáticos</span></div>
+        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">☕ Java <span style="opacity:0.7; font-size:11px">— Empresas, seguridad, portabilidad</span></div>
+        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">⚡ C++ <span style="opacity:0.7; font-size:11px">— Máxima velocidad, robótica</span></div>
+        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">🔬 Julia <span style="opacity:0.7; font-size:11px">— Computación científica de alto rendimiento</span></div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 3: CASOS PRÁCTICOS ASIR -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Casos Prácticos de IA en el Entorno ASIR</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g2 rev d3">
+      <div class="card accent-orange">
+        <span class="card-ico">⚖️</span>
+        <div class="card-lbl" style="color:var(--orange)">Automatización</div>
+        <div class="card-h">Balanceo &amp; Despliegue</div>
+        <div class="card-p">Scripts inteligentes que balancean la carga de servidores automáticamente y despliegan máquinas virtuales según la demanda.</div>
+      </div>
+      <div class="card accent-orange">
+        <span class="card-ico">🔍</span>
+        <div class="card-lbl" style="color:var(--orange)">Predictivo</div>
+        <div class="card-h">Detección de Fallos</div>
+        <div class="card-p">Analiza el estado del hardware constantemente. Avisa si un disco duro va a fallar antes de que el sistema caiga.</div>
+      </div>
+      <div class="card accent-orange">
+        <span class="card-ico">💬</span>
+        <div class="card-lbl" style="color:var(--orange)">Soporte</div>
+        <div class="card-h">Helpdesk Inteligente</div>
+        <div class="card-p">Chatbots que resuelven incidencias de Nivel 1 (contraseñas, conectividad) y derivan a técnicos solo los casos complejos.</div>
+      </div>
+      <div class="card accent-orange">
+        <span class="card-ico">🔐</span>
+        <div class="card-lbl" style="color:var(--orange)">Seguridad</div>
+        <div class="card-h">Análisis de Red</div>
+        <div class="card-p">Monitoriza tráfico en tiempo real. Si detecta anomalías a las 3 AM (DDoS, intrusión), bloquea la amenaza al instante.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 4: IMPACTO EMPRESARIAL -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Importancia de la IA en Empresa y Sector IT</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="cmp rev d4">
+      <div class="cmp-side bg-accent-orange accent-orange">
+        <div class="cmp-title" style="color:var(--orange)">En la Empresa</div>
+        <ul class="cmp-list">
+          <li><span>🎯</span>De modelo reactivo a modelo predictivo</li>
+          <li><span>👤</span>Hiperpersonalización de la experiencia del cliente</li>
+          <li><span>💸</span>Reducción de costes operativos</li>
+          <li><span>📈</span>Predicción de tendencias de mercado</li>
+        </ul>
+      </div>
+      <div class="cmp-side bg-accent-orange accent-orange">
+        <div class="cmp-title" style="color:var(--orange)">En el Sector IT</div>
+        <ul class="cmp-list">
+          <li><span>☁️</span>Gestión dinámica de arquitecturas cloud</li>
+          <li><span>📡</span>Optimización del ancho de banda</li>
+          <li><span>📋</span>Procesado masivo de logs de sistema</li>
+          <li><span>🛡️</span>Ciberseguridad activa e inteligente</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RA5 — Datos y Ciberseguridad          -->
+<!-- ══════════════════════════════════════ -->
+<section class="ra-section" id="ra5" data-section="5">
+  <div class="bg-num" style="color:var(--gold)">RA5</div>
+  <div class="ra-inner">
+
+    <div class="s-header rev">
+      <span class="s-tag" style="background:var(--gold)">RA5</span>
+      <h2 class="s-title">Datos &amp; Ciberseguridad<br>en la Economía Digital</h2>
+      <p class="s-sub">El dato es el nuevo petróleo. Aprende a gestionarlo, protegerlo y cumplir la normativa.</p>
+    </div>
+
+    <!-- SUBSECCIÓN 1: DATO VS INFORMACIÓN -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Dato vs Información — Diferencia Fundamental</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="cmp rev d1">
+      <div class="cmp-side bg-accent-gold accent-gold" style="text-align:center">
+        <div class="cmp-title" style="color:var(--gold)">📌 Dato</div>
+        <div style="font-family:var(--font-d); font-size:72px; line-height:1; letter-spacing:-0.04em; color:var(--gold); margin:16px 0">35</div>
+        <ul class="cmp-list" style="text-align:left">
+          <li><span>⚡</span>Unidad mínima, en bruto</li>
+          <li><span>🔤</span>Sin contexto ni significado propio</li>
+          <li><span>🧱</span>Materia prima del sistema</li>
+          <li><span>📍</span>Ejemplo: "35" o "Madrid"</li>
+        </ul>
+      </div>
+      <div class="cmp-side bg-accent-gold accent-gold" style="text-align:center">
+        <div class="cmp-title" style="color:var(--gold)">💡 Información</div>
+        <div style="font-family:var(--font-d); font-size:32px; line-height:1.1; letter-spacing:-0.03em; color:var(--gold); margin:16px 0">"En Madrid<br>hace 35°C"</div>
+        <ul class="cmp-list" style="text-align:left">
+          <li><span>✅</span>Datos organizados y contextualizados</li>
+          <li><span>🎯</span>Tiene significado y utilidad</li>
+          <li><span>🏁</span>Permite tomar decisiones</li>
+          <li><span>📊</span>Producto final del procesamiento</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 2: CICLO DE VIDA -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Ciclo de Vida del Dato</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="flow rev d2">
+      <div class="flow-step accent-gold">
+        <span class="fs-ico">📥</span>
+        <div class="fs-h" style="color:var(--gold)">Captura</div>
+        <div class="fs-p">Sensores IoT, formularios, registros de servidores</div>
+      </div>
+      <div class="flow-arr">→</div>
+      <div class="flow-step accent-gold">
+        <span class="fs-ico">💾</span>
+        <div class="fs-h" style="color:var(--gold)">Almacenamiento</div>
+        <div class="fs-p">Servidores locales, bases de datos o nube</div>
+      </div>
+      <div class="flow-arr">→</div>
+      <div class="flow-step accent-gold">
+        <span class="fs-ico">⚙️</span>
+        <div class="fs-h" style="color:var(--gold)">Procesamiento</div>
+        <div class="fs-p">Limpiar, clasificar y transformar los datos</div>
+      </div>
+      <div class="flow-arr">→</div>
+      <div class="flow-step accent-gold">
+        <span class="fs-ico">📊</span>
+        <div class="fs-h" style="color:var(--gold)">Uso</div>
+        <div class="fs-p">Dashboards para análisis y toma de decisiones</div>
+      </div>
+      <div class="flow-arr">→</div>
+      <div class="flow-step" style="border-color:rgba(255,196,18,0.35)">
+        <span class="fs-ico">🗑️</span>
+        <div class="fs-h" style="color:var(--gold)">Archivado / Borrado</div>
+        <div class="fs-p">Retención legal o destrucción segura</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 3: LAS 5 Vs -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Las 5 V's del Big Data</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="vs-grid rev d3">
+      <div class="vc">
+        <span class="vc-l" style="color:var(--gold)">V</span>
+        <span class="vc-n">Volumen</span>
+        <p class="vc-t">Terabytes o Petabytes de información que no caben en un disco convencional</p>
+      </div>
+      <div class="vc">
+        <span class="vc-l" style="color:var(--gold)">V</span>
+        <span class="vc-n">Velocidad</span>
+        <p class="vc-t">Datos generados y procesados en tiempo real, sin esperas</p>
+      </div>
+      <div class="vc">
+        <span class="vc-l" style="color:var(--gold)">V</span>
+        <span class="vc-n">Variedad</span>
+        <p class="vc-t">Tablas, vídeos, audios, sensores, redes sociales... estructurados y no estructurados</p>
+      </div>
+      <div class="vc">
+        <span class="vc-l" style="color:var(--gold)">V</span>
+        <span class="vc-n">Veracidad</span>
+        <p class="vc-t">Fiabilidad y calidad del dato. Datos erróneos = análisis incorrecto</p>
+      </div>
+      <div class="vc">
+        <span class="vc-l" style="color:var(--gold)">V</span>
+        <span class="vc-n">Valor</span>
+        <p class="vc-t">El objetivo final: extraer un beneficio real y estratégico del análisis</p>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 4: CID + RGPD -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Ciberseguridad — Tríada CID y Normativa RGPD</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="cid rev d4">
+      <div class="cid-c">
+        <span class="cid-letter" style="color:var(--gold)">C</span>
+        <div class="cid-name">Confidencialidad</div>
+        <p class="cid-p">Solo los usuarios autorizados pueden acceder a los datos. Control de accesos (RBAC) y autenticación 2FA.</p>
+      </div>
+      <div class="cid-c">
+        <span class="cid-letter" style="color:var(--gold)">I</span>
+        <div class="cid-name">Integridad</div>
+        <p class="cid-p">Nadie altera los datos sin autorización. Cifrado en tránsito y en reposo garantizan la integridad.</p>
+      </div>
+      <div class="cid-c">
+        <span class="cid-letter" style="color:var(--gold)">D</span>
+        <div class="cid-name">Disponibilidad</div>
+        <p class="cid-p">El sistema funciona siempre. Redundancia, backups y replicación en múltiples centros de datos.</p>
+      </div>
+    </div>
+
+    <div class="g2 rev d5" style="margin-top:18px">
+      <div class="card bg-accent-gold accent-gold">
+        <span class="card-ico">🔐</span>
+        <div class="card-lbl" style="color:var(--gold)">Almacenamiento Seguro</div>
+        <div class="card-h">Protección en la Nube</div>
+        <div class="card-p">Cifrado en tránsito y en reposo · Redundancia geográfica · Backups automáticos · Control RBAC con mínimos privilegios</div>
+      </div>
+      <div class="card bg-accent-gold accent-gold">
+        <span class="card-ico">⚖️</span>
+        <div class="card-lbl" style="color:var(--gold)">Normativa Europea</div>
+        <div class="card-h">RGPD</div>
+        <div class="card-p">✅ Consentimiento explícito del usuario · 🗑️ Derecho al olvido · ⚠️ Notificar brechas en 72h · 🏗️ Privacidad por diseño desde el inicio</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RA6 — Proyecto Transformación Digital  -->
+<!-- ══════════════════════════════════════ -->
+<section class="ra-section" id="ra6" data-section="6" style="background:rgba(0,166,82,0.03)">
+  <div class="bg-num" style="color:var(--emerald)">RA6</div>
+  <div class="ra-inner">
+
+    <div class="s-header rev">
+      <span class="s-tag" style="background:var(--emerald); color:var(--ghost)">RA6</span>
+      <h2 class="s-title">Proyecto de<br>Transformación Digital</h2>
+      <p class="s-sub">Del diagnóstico al plan completo. Cómo analizar una empresa, detectar áreas a digitalizar y presentar un proyecto profesional.</p>
+    </div>
+
+    <!-- SUBSECCIÓN 1: DIAGNÓSTICO, OBJETIVOS Y TECNOLOGÍAS -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Diagnóstico, Objetivos y Tecnologías Necesarias</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g3 rev d1">
+      <div class="card accent-emerald">
+        <span class="card-ico">🔍</span>
+        <div class="card-lbl" style="color:var(--emerald)">Paso 1</div>
+        <div class="card-h">Diagnóstico AS-IS</div>
+        <div class="card-p">Fotografía actual de la empresa. Documentar hardware, software y procesos existentes. Detectar cuellos de botella, papel, errores humanos y silos.</div>
+      </div>
+      <div class="card accent-emerald">
+        <span class="card-ico">🎯</span>
+        <div class="card-lbl" style="color:var(--emerald)">Paso 2</div>
+        <div class="card-h">Objetivos SMART</div>
+        <div class="card-p">Claros y medibles. No "ordenadores nuevos", sino "reducir tiempo de facturación un 30%" o "eliminar papel en 6 meses".</div>
+      </div>
+      <div class="card accent-emerald">
+        <span class="card-ico">🛠️</span>
+        <div class="card-lbl" style="color:var(--emerald)">Paso 3</div>
+        <div class="card-h">Tecnologías Necesarias</div>
+        <div class="card-p">Elegir las THD más adecuadas: Cloud si hay pérdida de datos, IoT si falta control de máquinas, Big Data si el análisis es lento.</div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 2: PLAN COMPLETO -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Plan de Digitalización Completo</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="proj-steps rev d3">
+      <div class="ps">
+        <div class="ps-num" style="color:var(--emerald)">01</div>
+        <div class="ps-body">
+          <div class="ps-title">Resumen Ejecutivo</div>
+          <div class="ps-text">Por qué la empresa necesita este cambio para sobrevivir en el mercado. Justificación estratégica clara para la dirección.</div>
+        </div>
+      </div>
+      <div class="ps">
+        <div class="ps-num" style="color:var(--emerald)">02</div>
+        <div class="ps-body">
+          <div class="ps-title">Fases y Cronograma (Hoja de Ruta)</div>
+          <div class="ps-text">Qué departamentos se digitalizan primero y cuánto tiempo toma cada fase. Realista para no paralizar la empresa.</div>
+        </div>
+      </div>
+      <div class="ps">
+        <div class="ps-num" style="color:var(--emerald)">03</div>
+        <div class="ps-body">
+          <div class="ps-title">Presupuesto y ROI</div>
+          <div class="ps-text">Coste de hardware, software y licencias. Cuánto dinero ahorrará o ganará la empresa a largo plazo. Retorno de Inversión justificado.</div>
+        </div>
+      </div>
+      <div class="ps">
+        <div class="ps-num" style="color:var(--emerald)">04</div>
+        <div class="ps-body">
+          <div class="ps-title">Plan de Formación</div>
+          <div class="ps-text">Cómo capacitar a los trabajadores en las nuevas herramientas. El mayor riesgo de un proyecto no es técnico, es humano (resistencia al cambio).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 3: INTEGRACIÓN DE SISTEMAS -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Integración de Datos, Apps y Plataformas</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="card rev d5 accent-emerald bg-accent-emerald">
+      <div style="display:flex; gap:40px; flex-wrap:wrap; align-items:center">
+        <div style="flex:1; min-width:220px">
+          <span class="card-ico">🔗</span>
+          <div class="card-lbl" style="color:var(--emerald)">Integración</div>
+          <div class="card-h">Sin Silos de Información</div>
+          <div class="card-p">Nada sirve si los sistemas no se "hablan". Usar <strong style="color:var(--emerald)">APIs</strong> para comunicar aplicaciones distintas y sistemas <strong style="color:var(--emerald)">ERP</strong> centralizados que conecten planta y oficina.</div>
+        </div>
+        <div style="flex:1; min-width:220px; display:flex; align-items:center; justify-content:center; gap:16px">
+          <div style="text-align:center; padding:16px; border-radius:24px; border:1.5px solid rgba(0,166,82,0.3); background:rgba(0,166,82,0.06)">
+            <div style="font-size:28px">🏭</div>
+            <div style="font-family:var(--font-d); font-size:16px; color:var(--emerald); letter-spacing:-0.01em">OT (Planta)</div>
+          </div>
+          <div style="font-family:var(--font-d); font-size:24px; color:var(--emerald)">⇌ API ⇌</div>
+          <div style="text-align:center; padding:16px; border-radius:24px; border:1.5px solid rgba(0,166,82,0.3); background:rgba(0,166,82,0.06)">
+            <div style="font-size:28px">🏢</div>
+            <div style="font-family:var(--font-d); font-size:16px; color:var(--emerald); letter-spacing:-0.01em">IT (Oficina)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSECCIÓN 4: RIESGOS -->
+    <div class="sub-div rev">
+      <div class="sub-div-line"></div>
+      <span class="sub-div-label">Riesgos a Contemplar en el Plan</span>
+      <div class="sub-div-line"></div>
+    </div>
+
+    <div class="g3 rev d4">
+      <div class="card accent-orange bg-accent-orange">
+        <span class="card-ico">💀</span>
+        <div class="card-lbl" style="color:#ff6d38">Riesgo crítico</div>
+        <div class="card-h">Brechas de Seguridad</div>
+        <div class="card-p">Al conectar toda la empresa, aumenta la superficie de ataque: virus, Ransomware, robo de datos. Obligatorio: auditorías, firewalls y backups.</div>
+      </div>
+      <div class="card accent-gold bg-accent-gold">
+        <span class="card-ico">😰</span>
+        <div class="card-lbl" style="color:var(--gold)">Riesgo humano</div>
+        <div class="card-h">Resistencia al Cambio</div>
+        <div class="card-p">El mayor riesgo no es técnico, es humano. Empleados pueden rechazar nueva tecnología por miedo o desconocimiento.</div>
+      </div>
+      <div class="card accent-emerald bg-accent-emerald">
+        <span class="card-ico">📐</span>
+        <div class="card-lbl" style="color:var(--emerald)">Visión futura</div>
+        <div class="card-h">Escalabilidad</div>
+        <div class="card-p">La tecnología se queda obsoleta rápido. Diseñar infraestructura escalable (Cloud) que permita crecer sin tirar todo y empezar de cero.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DIGITALIZACIÓN</div>
+  <div class="footer-sub">Hecho por Jeremy Rodriguez Arteaga · IES Las Galletas</div>
+</footer>
+
+<script>
+// ─── Scroll Progress ───────────────────
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = pct + '%';
+});
+
+// ─── Reveal on scroll ──────────────────
+const revEls = document.querySelectorAll('.rev');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+revEls.forEach(el => observer.observe(el));
+
+// ─── Side dots & section tracking ──────
+const sections = document.querySelectorAll('[data-section]');
+const dots = document.querySelectorAll('.side-dot');
+
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = e.target.dataset.section;
+      dots.forEach(d => d.classList.remove('active'));
+      const activeDot = document.querySelector(`.side-dot[data-ra="${idx}"]`);
+      if (activeDot) activeDot.classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => sectionObserver.observe(s));
+
+// ─── Smooth scroll helper ───────────────
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+// El parallax del bg-num ha sido eliminado: el número es ahora estático y se mueve con el scroll normalmente.
+</script>
+</body>
+</html>
