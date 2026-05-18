@@ -3,649 +3,353 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digitalización — Infografía Interactiva</title>
+<title>Digitalización — Presentación Interactiva</title>
 <meta name="author" content="Jeremy Rodriguez Arteaga">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════════════
+   TOKENS & BASE
+══════════════════════════════════════════════ */
 :root {
-  --midnight: #141414;
-  --ghost: #fdf9f0;
-  --lime: #c7ff69;
+  --midnight: #0e0e0e;
+  --surface: #161616;
+  --ghost: #f5f0e8;
+  --ghost-dim: rgba(245,240,232,0.45);
+
+  --lime:     #c7ff69;
   --amethyst: #7a78ff;
-  --orange: #ff6d38;
-  --emerald: #00a652;
-  --blue: #478bff;
-  --gold: #ffc412;
-  --lavender: #ccccff;
-  --r1: var(--lime);
-  --r2: var(--amethyst);
-  --r3: var(--blue);
-  --r4: var(--orange);
-  --r5: var(--gold);
-  --r6: var(--emerald);
-  --font-d: 'Bebas Neue', sans-serif;
-  --font-b: 'Inter', sans-serif;
-  --rc: 43px;
-  --rb: 25px;
+  --blue:     #478bff;
+  --orange:   #ff6d38;
+  --gold:     #ffc412;
+  --emerald:  #00a652;
+
+  --accent: var(--lime);
+  --accent-rgb: 199,255,105;
+
+  --fd: 'Bebas Neue', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+  --rc: 24px;
   --rp: 1000px;
 }
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 
 body {
   background: var(--midnight);
   color: var(--ghost);
-  font-family: var(--font-b);
+  font-family: var(--fb);
   overflow-x: hidden;
+  cursor: none; 
 }
 
-/* SCROLL PROGRESS */
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; z-index: 9999;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: rgba(var(--accent-rgb), 0.9);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width .2s, height .2s, background .4s;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed; z-index: 9998;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--accent-rgb), 0.35);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width .25s, height .25s, border-color .4s, transform .08s linear;
+}
+body:has(.card:hover) #cursor, body:has(.flow-step:hover) #cursor { width:24px; height:24px; }
+body:has(.card:hover) #cursor-ring, body:has(.flow-step:hover) #cursor-ring { width:56px; height:56px; }
+
+/* ── PROGRESS & NAV ── */
 #progress-bar {
-  position: fixed;
-  top: 0; left: 0;
-  height: 3px;
+  position: fixed; top:0; left:0; height:3px; z-index:300; width:0%;
   background: linear-gradient(90deg, var(--lime), var(--amethyst), var(--blue), var(--orange), var(--gold), var(--emerald));
-  z-index: 200;
-  width: 0%;
-  transition: width 0.1s linear;
+  transition: width .1s linear;
 }
-
-/* NAV */
 nav {
-  position: fixed;
-  top: 3px; left: 0; right: 0;
-  z-index: 100;
-  background: rgba(20,20,20,0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(253,249,240,0.07);
-  padding: 13px 40px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  position: fixed; top:3px; left:0; right:0; z-index:200;
+  background: rgba(14,14,14,0.88); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(245,240,232,0.06);
+  padding: 12px 40px; display:flex; align-items:center; gap:6px;
 }
-
-.nav-logo {
-  font-family: var(--font-d);
-  font-size: 18px;
-  color: var(--ghost);
-  letter-spacing: 0.06em;
-  margin-right: 24px;
-}
-.nav-logo span { color: var(--lime); }
-
-.nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
-
+.nav-logo { font-family:var(--fd); font-size:18px; letter-spacing:.06em; margin-right:24px; color:var(--ghost); }
+.nav-logo em { font-style:normal; }
+.nav-links { display:flex; gap:4px; flex-wrap:wrap; }
 .nav-a {
-  padding: 5px 14px;
-  border-radius: var(--rp);
-  font-size: 11px;
-  font-weight: 600;
-  text-decoration: none;
-  border: 1.5px solid transparent;
-  transition: all 0.25s ease;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  padding:5px 13px; border-radius:var(--rp); font-size:11px; font-weight:600;
+  text-decoration:none; border:1.5px solid transparent; letter-spacing:.04em;
+  text-transform:uppercase; transition:all .22s ease;
 }
-.nav-a:hover { border-color: currentColor; background: rgba(255,255,255,0.04); }
-.na1 { color: var(--lime); }
-.na2 { color: var(--amethyst); }
-.na3 { color: var(--blue); }
-.na4 { color: var(--orange); }
-.na5 { color: var(--gold); }
-.na6 { color: var(--emerald); }
+.nav-a:hover { border-color:currentColor; background:rgba(255,255,255,.04); }
+.na1{color:var(--lime)} .na2{color:var(--amethyst)} .na3{color:var(--blue)}
+.na4{color:var(--orange)} .na5{color:var(--gold)} .na6{color:var(--emerald)}
 
-/* SIDE DOTS */
+#presenter-bar {
+  position: fixed; bottom:0; left:0; right:0; z-index:200;
+  background: rgba(14,14,14,0.92); backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(245,240,232,0.06); padding: 10px 32px;
+  display: flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.pb-section { display:flex; align-items:center; gap:12px; }
+.pb-tag {
+  font-family:var(--fd); font-size:13px; letter-spacing:.1em;
+  padding: 4px 14px; border-radius:var(--rp);
+  background: rgba(var(--accent-rgb),.15); color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb),.3); transition: all .4s ease;
+}
+.pb-title { font-size:12px; font-weight:600; color:var(--ghost-dim); letter-spacing:.02em; }
+
+.pb-dots { display:flex; gap:6px; align-items:center; }
+.pb-dot {
+  width:7px; height:7px; border-radius:50%; background:rgba(245,240,232,.15);
+  cursor:pointer; transition:all .3s ease; border:none;
+}
+.pb-dot.active { background:var(--accent); transform:scale(1.5); }
+
 .side-nav {
-  position: fixed;
-  right: 24px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 99;
+  position:fixed; right:22px; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:10px; z-index:150;
 }
 .side-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: rgba(253,249,240,0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  display: block;
+  width:7px; height:7px; border-radius:50%; background:rgba(245,240,232,.18);
+  cursor:pointer; transition:all .3s ease; border:none; display:block;
 }
-.side-dot.active { transform: scale(1.6); }
-.side-dot[data-ra="0"] { background: rgba(253,249,240,0.3); }
-.side-dot[data-ra="1"].active { background: var(--lime); }
-.side-dot[data-ra="2"].active { background: var(--amethyst); }
-.side-dot[data-ra="3"].active { background: var(--blue); }
-.side-dot[data-ra="4"].active { background: var(--orange); }
-.side-dot[data-ra="5"].active { background: var(--gold); }
-.side-dot[data-ra="6"].active { background: var(--emerald); }
+.side-dot.active { transform:scale(1.7); }
+.side-dot[data-ra="1"].active{background:var(--lime)}
+.side-dot[data-ra="2"].active{background:var(--amethyst)}
+.side-dot[data-ra="3"].active{background:var(--blue)}
+.side-dot[data-ra="4"].active{background:var(--orange)}
+.side-dot[data-ra="5"].active{background:var(--gold)}
+.side-dot[data-ra="6"].active{background:var(--emerald)}
 
-/* HERO */
+/* ── HERO ── */
 .hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 40px 80px;
-  position: relative;
-  overflow: hidden;
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding:120px 40px 100px; position:relative; overflow:hidden;
 }
-
-.hero-orb {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(80px);
-  opacity: 0.12;
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background-image: radial-gradient(circle, rgba(245,240,232,.045) 1px, transparent 1px);
+  background-size:30px 30px; pointer-events:none;
 }
-.orb1 { width: 600px; height: 600px; background: var(--lime); top: -100px; left: -200px; animation: drift 12s ease-in-out infinite; }
-.orb2 { width: 400px; height: 400px; background: var(--amethyst); bottom: -100px; right: -100px; animation: drift 10s 2s ease-in-out infinite reverse; }
-.orb3 { width: 300px; height: 300px; background: var(--blue); top: 50%; left: 60%; animation: drift 14s 4s ease-in-out infinite; }
-
-@keyframes drift {
-  0%, 100% { transform: translate(0,0); }
-  33% { transform: translate(30px, -40px); }
-  66% { transform: translate(-20px, 20px); }
-}
+.hero-orb { position:absolute; border-radius:50%; pointer-events:none; filter:blur(90px); opacity:.11; }
+.orb1{width:700px;height:700px;background:var(--lime);top:-150px;left:-200px;animation:drift 13s ease-in-out infinite}
+.orb2{width:450px;height:450px;background:var(--amethyst);bottom:-120px;right:-120px;animation:drift 11s 2s ease-in-out infinite reverse}
+.orb3{width:320px;height:320px;background:var(--blue);top:40%;left:55%;animation:drift 15s 4s ease-in-out infinite}
+@keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(35px,-45px)}66%{transform:translate(-25px,25px)}}
 
 .hero-badge {
-  display: inline-block;
-  padding: 6px 20px;
-  border: 1.5px solid var(--lime);
-  border-radius: var(--rp);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--lime);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 36px;
-  animation: fadeUp 0.9s ease both;
+  position:relative; z-index:1; display:inline-flex; align-items:center; gap:8px;
+  padding:7px 22px; border:1.5px solid var(--lime); border-radius:var(--rp);
+  font-size:11px; font-weight:700; color:var(--lime); letter-spacing:.15em; text-transform:uppercase;
+  margin-bottom:40px; animation:fadeUp .9s ease both;
 }
+.hero-badge::before {
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:var(--lime); animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.6}}
 
 .hero-h1 {
-  font-family: var(--font-d);
-  font-size: clamp(70px, 12vw, 150px);
-  line-height: 0.85;
-  letter-spacing: -0.03em;
-  color: var(--ghost);
-  margin-bottom: 8px;
-  animation: fadeUp 0.9s 0.15s ease both;
+  position:relative; z-index:1; font-family:var(--fd); font-size:clamp(72px,13vw,160px);
+  line-height:.82; letter-spacing:-.03em; color:var(--ghost);
+  margin-bottom:6px; animation:fadeUp .9s .12s ease both;
 }
-
+.hero-h1 .hl { color:inherit; }
 .hero-h2 {
-  font-family: var(--font-d);
-  font-size: clamp(28px, 5vw, 56px);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: rgba(253,249,240,0.3);
-  margin-bottom: 36px;
-  animation: fadeUp 0.9s 0.3s ease both;
+  position:relative; z-index:1; font-family:var(--fd); font-size:clamp(26px,4.5vw,52px);
+  line-height:1; letter-spacing:-.02em; color:rgba(245,240,232,.25);
+  margin-bottom:30px; animation:fadeUp .9s .25s ease both;
 }
-
+.hero-author {
+  position:relative; z-index:1; font-size:13px; color:rgba(245,240,232,.38);
+  letter-spacing:.04em; margin-bottom:10px; animation:fadeUp .9s .33s ease both;
+}
+.hero-author strong { color:rgba(245,240,232,.7); font-weight:600; }
 .hero-desc {
-  font-size: 16px;
-  color: rgba(253,249,240,0.5);
-  max-width: 480px;
-  line-height: 1.6;
-  margin-bottom: 56px;
-  animation: fadeUp 0.9s 0.45s ease both;
+  position:relative; z-index:1; font-size:15px; color:rgba(245,240,232,.38); max-width:460px;
+  line-height:1.7; margin-bottom:52px; animation:fadeUp .9s .42s ease both;
 }
-
 .hero-pills {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  animation: fadeUp 0.9s 0.6s ease both;
+  position:relative; z-index:1; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+  animation:fadeUp .9s .54s ease both;
 }
 .hp {
-  padding: 10px 22px;
-  border-radius: var(--rp);
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: transform 0.2s, box-shadow 0.2s;
-  color: var(--midnight);
+  padding:11px 24px; border-radius:var(--rp); font-size:12px; font-weight:700;
+  text-decoration:none; letter-spacing:.04em; text-transform:uppercase;
+  transition:transform .25s, box-shadow .25s; color:var(--midnight);
 }
-.hp:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-.hp1 { background: var(--lime); }
-.hp2 { background: var(--amethyst); color: var(--ghost); }
-.hp3 { background: var(--blue); color: var(--ghost); }
-.hp4 { background: var(--orange); color: var(--ghost); }
-.hp5 { background: var(--gold); }
-.hp6 { background: var(--emerald); color: var(--ghost); }
+.hp:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.hp1{background:var(--lime)} .hp2{background:var(--amethyst);color:var(--ghost)}
+.hp3{background:var(--blue);color:var(--ghost)} .hp4{background:var(--orange);color:var(--ghost)}
+.hp5{background:var(--gold)} .hp6{background:var(--emerald);color:var(--ghost)}
 
 .scroll-hint {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  animation: fadeUp 0.9s 0.9s ease both;
+  position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px; z-index:1;
+  animation:fadeUp .9s .9s ease both;
 }
-.scroll-hint span {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(253,249,240,0.3);
+.scroll-hint span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.22)}
+.scroll-arrow{width:20px;height:30px;border:1.5px solid rgba(245,240,232,.16);border-radius:10px;position:relative}
+.scroll-arrow::after{
+  content:''; position:absolute; width:4px;height:8px; background:rgba(245,240,232,.32);
+  border-radius:2px; left:50%;top:5px; transform:translateX(-50%);
+  animation:scrollDown 1.5s ease-in-out infinite;
 }
-.scroll-arrow {
-  width: 20px; height: 30px;
-  border: 1.5px solid rgba(253,249,240,0.2);
-  border-radius: 10px;
-  position: relative;
-}
-.scroll-arrow::after {
-  content: '';
-  position: absolute;
-  width: 4px; height: 8px;
-  background: rgba(253,249,240,0.4);
-  border-radius: 2px;
-  left: 50%;
-  top: 5px;
-  transform: translateX(-50%);
-  animation: scrollDown 1.5s ease-in-out infinite;
-}
-@keyframes scrollDown {
-  0% { opacity: 1; top: 5px; }
-  100% { opacity: 0; top: 16px; }
-}
+@keyframes scrollDown{0%{opacity:1;top:5px}100%{opacity:0;top:16px}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── RA SECTIONS ── */
+.ra-section { padding:110px 60px 110px; position:relative; overflow:hidden; }
+.ra-section::before {
+  content:''; position:absolute; inset:0;
+  background-image: radial-gradient(circle, rgba(245,240,232,.035) 1px, transparent 1px);
+  background-size:28px 28px; pointer-events:none; z-index:0;
 }
+.ra-glow { position:absolute; border-radius:50%; pointer-events:none; filter:blur(120px); opacity:.07; z-index:0; }
+.ra-glow-a{width:600px;height:600px;top:-150px;left:-150px}
+.ra-glow-b{width:420px;height:420px;bottom:-100px;right:-100px}
+#ra1 .ra-glow{background:var(--lime)} #ra2 .ra-glow{background:var(--amethyst)}
+#ra3 .ra-glow{background:var(--blue)} #ra4 .ra-glow{background:var(--orange)}
+#ra5 .ra-glow{background:var(--gold)} #ra6 .ra-glow{background:var(--emerald)}
+.ra-inner{max-width:1160px;margin:0 auto;position:relative;z-index:1}
 
-/* ──── RA SECTIONS ──── */
-.ra-section {
-  padding: 110px 60px 100px;
-  position: relative;
-  overflow: hidden;
-}
-
-.ra-inner { max-width: 1160px; margin: 0 auto; }
-
-/* bg-num — ahora estático, sin parallax */
 .bg-num {
-  position: absolute;
-  font-family: var(--font-d);
-  font-size: clamp(140px, 22vw, 260px);
-  line-height: 0.85;
-  letter-spacing: -0.05em;
-  pointer-events: none;
-  top: 40px; right: -20px;
-  z-index: 0;
-  opacity: 0.06;
-  user-select: none;
+  position:absolute; font-family:var(--fd); font-size:clamp(140px,22vw,260px);
+  line-height:.85; letter-spacing:-.05em; pointer-events:none;
+  top:40px; right:-20px; z-index:0; opacity:.05; user-select:none;
 }
 
-.s-header { position: relative; z-index: 1; margin-bottom: 56px; }
-
+/* ── HEADERS & DIVIDERS ── */
+.s-header{position:relative;z-index:1;margin-bottom:56px}
 .s-tag {
-  display: inline-block;
-  padding: 5px 16px;
-  border-radius: var(--rp);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-  color: var(--midnight);
+  display:inline-block; padding:5px 16px; border-radius:var(--rp);
+  font-size:11px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; margin-bottom:14px; color:var(--midnight);
 }
+.s-title { font-family:var(--fd); font-size:clamp(36px,6vw,80px); line-height:.87; letter-spacing:-.03em; color:var(--ghost); max-width:800px; }
+.s-sub{font-size:16px;color:rgba(245,240,232,.4);margin-top:18px;max-width:650px;line-height:1.6}
 
-.s-title {
-  font-family: var(--font-d);
-  font-size: clamp(36px, 6vw, 78px);
-  line-height: 0.88;
-  letter-spacing: -0.03em;
-  color: var(--ghost);
-  max-width: 700px;
-}
+.sub-div{display:flex;align-items:center;gap:18px;margin:64px 0 32px;position:relative;z-index:1}
+.sub-div-line{flex:1;height:1px;background:rgba(245,240,232,.07)}
+.sub-div-label{font-family:var(--fd);font-size:16px;letter-spacing:.14em;text-transform:uppercase;opacity:.28;white-space:nowrap;flex-shrink:0}
 
-.s-sub {
-  font-size: 15px;
-  color: rgba(253,249,240,0.45);
-  margin-top: 16px;
-  max-width: 560px;
-  line-height: 1.5;
-}
+/* ── GRIDS ── */
+.g1{display:grid;grid-template-columns:1fr;gap:20px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 
-/* ──── SUBSECTION DIVIDER ──── */
-.sub-div {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin: 60px 0 32px;
-  position: relative;
-  z-index: 1;
-}
-.sub-div-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(253,249,240,0.08);
-}
-.sub-div-label {
-  font-family: var(--font-d);
-  font-size: 15px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.28;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* Grid layouts */
-.g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
-.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
-.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-
-/* Base card */
+/* ── CARDS (Larger for full text) ── */
 .card {
-  background: rgba(253,249,240,0.03);
-  border: 1.5px solid rgba(253,249,240,0.09);
-  border-radius: var(--rc);
-  padding: 30px;
-  position: relative;
-  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
-  z-index: 1;
+  background:rgba(245,240,232,.028); border:1.5px solid rgba(245,240,232,.08);
+  border-radius:var(--rc); padding:36px; position:relative; z-index:1;
+  transform-style:preserve-3d; transition:box-shadow .3s ease, border-color .3s ease, background .3s ease;
+  will-change:transform; display:flex; flex-direction:column;
 }
-.card:hover {
-  transform: translateY(-5px);
-  background: rgba(253,249,240,0.06);
-}
+.card:hover { box-shadow:0 28px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(245,240,232,.08); background:rgba(245,240,232,.055); }
+.card-ico{font-size:38px;display:block;margin-bottom:16px}
+.card-lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:8px}
+.card-h{font-family:var(--fd);font-size:28px;letter-spacing:-.02em;line-height:1;color:var(--ghost);margin-bottom:14px}
+.card-p{font-size:15px;line-height:1.6;color:rgba(245,240,232,.65);flex:1;}
+.card-p strong { color:var(--ghost); font-weight:600; }
 
-.card-ico { font-size: 36px; display: block; margin-bottom: 16px; }
-.card-lbl {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; opacity: 0.5; margin-bottom: 6px;
-}
-.card-h {
-  font-family: var(--font-d);
-  font-size: 24px; letter-spacing: -0.02em; line-height: 1;
-  color: var(--ghost); margin-bottom: 10px;
-}
-.card-p {
-  font-size: 13px; line-height: 1.6;
-  color: rgba(253,249,240,0.58);
-}
+/* ── LIST/COMPARE BLOCKS ── */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.cmp-side{border-radius:var(--rc);padding:36px;border:1.5px solid rgba(245,240,232,.08); background:rgba(245,240,232,.03);}
+.cmp-title{font-family:var(--fd);font-size:32px;letter-spacing:-.02em;margin-bottom:20px}
+.cmp-list{list-style:none}
+.cmp-list li{padding:12px 0;font-size:15px;color:rgba(245,240,232,.65);border-bottom:1px solid rgba(245,240,232,.05);display:flex;align-items:flex-start;gap:12px;line-height:1.5}
+.cmp-list li span{flex-shrink:0;font-size:18px}
 
-/* accent card */
-.card-filled { color: var(--midnight) !important; }
-.card-filled .card-p { color: rgba(20,20,20,0.65) !important; }
-.card-filled .card-h { color: var(--midnight) !important; }
-.card-filled .card-lbl { color: rgba(20,20,20,0.5) !important; }
-
-/* bordered accent */
-.card-accent-border { border-width: 2px; }
-
-/* Flow steps */
-.flow {
-  display: flex; align-items: stretch; gap: 0;
-  margin: 36px 0; position: relative; z-index: 1;
-}
+/* ── FLOW (Horizontal or Vertical) ── */
+.flow{display:flex;flex-direction:column;gap:16px;}
 .flow-step {
-  flex: 1; padding: 28px 24px;
-  border-radius: 30px;
-  background: rgba(253,249,240,0.04);
-  border: 1.5px solid rgba(253,249,240,0.09);
-  text-align: center;
-  transition: transform 0.3s;
+  display:flex; align-items:center; gap:24px; padding:28px 36px; border-radius:var(--rc);
+  background:rgba(245,240,232,.035); border:1.5px solid rgba(245,240,232,.08);
+  transition:transform .28s ease, background .28s ease;
 }
-.flow-step:hover { transform: translateY(-4px); }
-.flow-arr {
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 10px; font-size: 20px;
-  color: rgba(253,249,240,0.25); flex-shrink: 0;
-}
-.fs-ico { font-size: 30px; display: block; margin-bottom: 12px; }
-.fs-h { font-family: var(--font-d); font-size: 20px; letter-spacing: -0.02em; margin-bottom: 8px; }
-.fs-p { font-size: 12px; color: rgba(253,249,240,0.5); line-height: 1.5; }
+.flow-step:hover{ transform:translateX(8px); background:rgba(245,240,232,.065); }
+.fs-ico{font-size:36px;flex-shrink:0;}
+.fs-content { flex:1; }
+.fs-h{font-family:var(--fd);font-size:26px;letter-spacing:-.02em;margin-bottom:6px}
+.fs-p{font-size:15px;color:rgba(245,240,232,.65);line-height:1.5;}
 
-/* Comparison */
-.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 32px 0; z-index: 1; position: relative; }
-.cmp-side { border-radius: var(--rc); padding: 32px; border: 1.5px solid rgba(253,249,240,0.09); }
-.cmp-title { font-family: var(--font-d); font-size: 30px; letter-spacing: -0.02em; margin-bottom: 20px; }
-.cmp-list { list-style: none; }
-.cmp-list li {
-  padding: 9px 0; font-size: 13px; color: rgba(253,249,240,0.65);
-  border-bottom: 1px solid rgba(253,249,240,0.06);
-  display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;
+/* ── PROJECT STEPS / NUMBERED LIST ── */
+.proj-steps{display:flex;flex-direction:column;gap:16px}
+.ps{
+  display:flex;gap:30px;align-items:flex-start;padding:32px 36px;border-radius:var(--rc);
+  border:1.5px solid rgba(245,240,232,.07);background:rgba(245,240,232,.025);
+  transition:transform .28s ease, background .28s;
 }
-.cmp-list li span { flex-shrink: 0; font-size: 16px; }
+.ps:hover{transform:translateX(12px);background:rgba(245,240,232,.055)}
+.ps-num{font-family:var(--fd);font-size:58px;line-height:.85;letter-spacing:-.04em;flex-shrink:0;opacity:.28}
+.ps-body{flex:1}
+.ps-title{font-family:var(--fd);font-size:28px;letter-spacing:-.02em;margin-bottom:10px}
+.ps-text{font-size:15px;color:rgba(245,240,232,.65);line-height:1.6}
 
-/* ODS block */
-.ods-wrap { margin-top: 60px; position: relative; z-index: 1; }
-.ods-label {
-  font-family: var(--font-d); font-size: 20px; letter-spacing: -0.02em;
-  opacity: 0.5; margin-bottom: 20px;
-}
-.ods-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-.ods-c {
-  border-radius: 30px; padding: 26px 22px;
-  border: 1.5px solid rgba(253,249,240,0.08);
-  background: rgba(253,249,240,0.03);
-  transition: transform 0.3s;
-}
-.ods-c:hover { transform: translateY(-4px); }
-.ods-num { font-family: var(--font-d); font-size: 56px; line-height: 0.85; letter-spacing: -0.04em; display: block; margin-bottom: 6px; }
-.ods-name { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; display: block; }
-.ods-txt { font-size: 12px; line-height: 1.5; color: rgba(253,249,240,0.55); }
+/* ── REVEAL ── */
+.rev{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease}
+.rev.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.05s} .d2{transition-delay:.1s} .d3{transition-delay:.15s} .d4{transition-delay:.2s} .d5{transition-delay:.25s}
 
-/* Tech cards RA2 */
-.tech-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-.tc {
-  border-radius: 36px; padding: 28px 20px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; gap: 12px;
-  transition: transform 0.3s ease;
-  cursor: default;
-  border: 1.5px solid transparent;
-  min-height: 150px;
-}
-.tc:hover { transform: scale(1.05); }
-.tc-ico { font-size: 38px; }
-.tc-h { font-family: var(--font-d); font-size: 17px; letter-spacing: -0.01em; color: var(--midnight); }
-.tc-p { font-size: 11px; color: rgba(20,20,20,0.6); line-height: 1.4; }
+/* ── ACCENT UTILITIES ── */
+.accent-lime{border-color:rgba(199,255,105,.28)!important} .bg-accent-lime{background:rgba(199,255,105,.04)!important}
+.accent-amethyst{border-color:rgba(122,120,255,.32)!important} .bg-accent-amethyst{background:rgba(122,120,255,.04)!important}
+.accent-blue{border-color:rgba(71,139,255,.32)!important} .bg-accent-blue{background:rgba(71,139,255,.04)!important}
+.accent-orange{border-color:rgba(255,109,56,.32)!important} .bg-accent-orange{background:rgba(255,109,56,.04)!important}
+.accent-gold{border-color:rgba(255,196,18,.32)!important} .bg-accent-gold{background:rgba(255,196,18,.04)!important}
+.accent-emerald{border-color:rgba(0,166,82,.32)!important} .bg-accent-emerald{background:rgba(0,166,82,.04)!important}
 
-/* Cloud pyramid RA3 */
-.pyramid-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 36px auto; max-width: 700px; }
-.pl {
-  border-radius: 22px; padding: 22px 36px; text-align: center;
-  transition: transform 0.3s; cursor: default;
-}
-.pl:hover { transform: scaleX(1.03); }
-.pl-title { font-family: var(--font-d); font-size: 22px; letter-spacing: -0.02em; }
-.pl-sub { font-size: 12px; margin-top: 4px; opacity: 0.75; }
-.pl-w1 { width: 100%; }
-.pl-w2 { width: 78%; }
-.pl-w3 { width: 56%; }
-.pl-w4 { width: 38%; }
-
-/* AI ecosystem RA4 */
-.ai-eco {
-  display: flex; flex-direction: column; align-items: center; gap: 16px;
-  position: relative; margin: 40px 0;
-}
-.ai-ring {
-  width: 100%; max-width: 680px; padding: 30px 40px;
-  border-radius: 50px; text-align: center;
-  position: relative; transition: transform 0.3s;
-}
-.ai-ring:hover { transform: scaleX(1.02); }
-.ai-ring-title { font-family: var(--font-d); font-size: 28px; letter-spacing: -0.02em; }
-.ai-ring-sub { font-size: 13px; opacity: 0.7; margin-top: 4px; }
-.ai-r1 { max-width: 100%; }
-.ai-r2 { max-width: 84%; }
-.ai-r3 { max-width: 68%; }
-.ai-r4 { max-width: 52%; }
-
-/* Big Data Vs RA5 */
-.vs-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 13px; }
-.vc {
-  border-radius: 28px; padding: 26px 16px; text-align: center;
-  border: 1.5px solid rgba(253,249,240,0.09);
-  background: rgba(253,249,240,0.03);
-  transition: transform 0.3s;
-}
-.vc:hover { transform: translateY(-5px); }
-.vc-l { font-family: var(--font-d); font-size: 68px; line-height: 0.85; letter-spacing: -0.04em; display: block; margin-bottom: 6px; }
-.vc-n { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; margin-bottom: 8px; display: block; }
-.vc-t { font-size: 12px; line-height: 1.4; color: rgba(253,249,240,0.55); }
-
-/* CID triad */
-.cid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 32px 0; }
-.cid-c {
-  border-radius: var(--rc); padding: 36px 28px; text-align: center;
-  background: rgba(253,249,240,0.04);
-  border: 1.5px solid rgba(253,249,240,0.09);
-  transition: transform 0.3s;
-}
-.cid-c:hover { transform: translateY(-4px); }
-.cid-letter { font-family: var(--font-d); font-size: 80px; line-height: 0.85; letter-spacing: -0.04em; display: block; margin-bottom: 10px; }
-.cid-name { font-family: var(--font-d); font-size: 22px; letter-spacing: -0.02em; margin-bottom: 10px; }
-.cid-p { font-size: 13px; color: rgba(253,249,240,0.55); line-height: 1.5; }
-
-/* Project RA6 */
-.proj-steps { display: flex; flex-direction: column; gap: 14px; }
-.ps {
-  display: flex; gap: 24px; align-items: flex-start;
-  padding: 28px 30px; border-radius: 32px;
-  border: 1.5px solid rgba(253,249,240,0.08);
-  background: rgba(253,249,240,0.03);
-  transition: transform 0.3s;
-}
-.ps:hover { transform: translateX(10px); }
-.ps-num {
-  font-family: var(--font-d); font-size: 52px;
-  line-height: 0.85; letter-spacing: -0.04em; flex-shrink: 0;
-  opacity: 0.35;
-}
-.ps-body { flex: 1; }
-.ps-title { font-family: var(--font-d); font-size: 26px; letter-spacing: -0.02em; margin-bottom: 6px; }
-.ps-text { font-size: 13px; color: rgba(253,249,240,0.58); line-height: 1.5; }
-
-/* Language chips */
-.langs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
-.lang-chip {
-  padding: 8px 20px; border-radius: var(--rp);
-  font-size: 13px; font-weight: 600;
-  letter-spacing: 0.02em;
-  border: 1.5px solid;
-  transition: transform 0.2s;
-}
-.lang-chip:hover { transform: translateY(-2px); }
-
-/* Section separator */
-.sep {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(253,249,240,0.1), transparent);
-  margin: 0;
-}
-
-/* Reveal animation */
-.rev {
-  opacity: 0; transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.rev.in { opacity: 1; transform: translateY(0); }
-.d1 { transition-delay: 0.08s; }
-.d2 { transition-delay: 0.16s; }
-.d3 { transition-delay: 0.24s; }
-.d4 { transition-delay: 0.32s; }
-.d5 { transition-delay: 0.40s; }
-.d6 { transition-delay: 0.48s; }
-.d7 { transition-delay: 0.56s; }
-.d8 { transition-delay: 0.64s; }
-
-/* Pulse dot */
-.pulse {
-  display: inline-block; width: 8px; height: 8px;
-  border-radius: 50%; vertical-align: middle; margin-right: 6px;
-  animation: pulse-anim 2s ease-in-out infinite;
-}
-@keyframes pulse-anim {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.6; }
-}
-
-/* FOOTER */
+/* ── FOOTER ── */
 footer {
-  background: rgba(253,249,240,0.02);
-  border-top: 1px solid rgba(253,249,240,0.07);
-  padding: 48px 60px;
-  text-align: center;
+  position:relative; overflow:hidden; padding:90px 60px 120px; background:rgba(245,240,232,.015); border-top:1px solid rgba(245,240,232,.07);
 }
-.footer-logo { font-family: var(--font-d); font-size: 32px; letter-spacing: -0.02em; margin-bottom: 10px; }
-.footer-logo span { color: var(--lime); }
-.footer-sub { font-size: 13px; color: rgba(253,249,240,0.35); }
+.footer-inner { position:relative;z-index:1;max-width:1160px;margin:0 auto; display:grid;grid-template-columns:1fr auto;gap:60px;align-items:start; }
+.footer-logo-wrap { font-family:var(--fd);font-size:clamp(52px,8vw,100px); line-height:.82;letter-spacing:-.04em;color:var(--ghost);margin-bottom:28px; }
+.footer-logo-wrap .fl { color:inherit; }
+.footer-by{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.28);display:block;margin-bottom:7px}
+.footer-name{font-family:var(--fd);font-size:clamp(22px,3vw,38px);letter-spacing:-.02em;color:var(--ghost);display:block;margin-bottom:5px}
+.footer-school{font-size:13px;color:rgba(245,240,232,.32);letter-spacing:.04em}
+.footer-right{text-align:right}
+.footer-year{font-family:var(--fd);font-size:clamp(60px,9vw,120px);line-height:.85;letter-spacing:-.05em;color:rgba(245,240,232,.045);display:block;margin-bottom:12px}
 
-/* RA accent utilities */
-.accent-lime { border-color: rgba(199,255,105,0.25) !important; }
-.accent-amethyst { border-color: rgba(122,120,255,0.3) !important; }
-.accent-blue { border-color: rgba(71,139,255,0.3) !important; }
-.accent-orange { border-color: rgba(255,109,56,0.3) !important; }
-.accent-gold { border-color: rgba(255,196,18,0.3) !important; }
-.accent-emerald { border-color: rgba(0,166,82,0.3) !important; }
-.bg-accent-lime { background: rgba(199,255,105,0.04) !important; }
-.bg-accent-amethyst { background: rgba(122,120,255,0.04) !important; }
-.bg-accent-blue { background: rgba(71,139,255,0.04) !important; }
-.bg-accent-orange { background: rgba(255,109,56,0.04) !important; }
-.bg-accent-gold { background: rgba(255,196,18,0.04) !important; }
-.bg-accent-emerald { background: rgba(0,166,82,0.04) !important; }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .ra-section { padding: 80px 28px 70px; }
-  .g2,.g3,.g4 { grid-template-columns: 1fr; }
-  .tech-grid { grid-template-columns: repeat(2,1fr); }
-  .ods-grid { grid-template-columns: repeat(2,1fr); }
-  .vs-grid { grid-template-columns: repeat(2,1fr); }
-  .cmp { grid-template-columns: 1fr; }
-  .cid { grid-template-columns: 1fr; }
-  .flow { flex-direction: column; }
-  .flow-arr { transform: rotate(90deg); height: 20px; }
-  .pyramid-wrap .pl { width: 100% !important; }
-  .ai-ring { max-width: 100% !important; }
-  nav { padding: 10px 20px; }
-  .nav-links { gap: 2px; }
-  .nav-a { padding: 4px 10px; font-size: 10px; }
-  .side-nav { display: none; }
-  .bg-num { display: none; }
-  footer { padding: 40px 28px; }
-  .sub-div { margin: 40px 0 24px; }
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  body{cursor:auto} #cursor,#cursor-ring{display:none}
+  .ra-section{padding:80px 24px 90px}
+  .g2,.g3,.cmp{grid-template-columns:1fr}
+  .flow-step{flex-direction:column;text-align:center}
+  nav{padding:10px 18px} .nav-a{padding:4px 10px;font-size:10px}
+  .side-nav{display:none} .bg-num{display:none} #presenter-bar{padding:8px 16px}
+  .pb-keys{display:none} .footer-inner{grid-template-columns:1fr} .footer-right{display:none}
 }
 </style>
 </head>
 <body>
 
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 <div id="progress-bar"></div>
 
-<!-- SIDE DOTS -->
 <nav-side class="side-nav">
-  <button class="side-dot active" data-ra="0" onclick="scrollToId('hero')" title="Inicio"></button>
-  <button class="side-dot" data-ra="1" onclick="scrollToId('ra1')" title="RA1"></button>
-  <button class="side-dot" data-ra="2" onclick="scrollToId('ra2')" title="RA2"></button>
-  <button class="side-dot" data-ra="3" onclick="scrollToId('ra3')" title="RA3"></button>
-  <button class="side-dot" data-ra="4" onclick="scrollToId('ra4')" title="RA4"></button>
-  <button class="side-dot" data-ra="5" onclick="scrollToId('ra5')" title="RA5"></button>
-  <button class="side-dot" data-ra="6" onclick="scrollToId('ra6')" title="RA6"></button>
+  <button class="side-dot active" data-ra="0" onclick="jumpTo('hero')"></button>
+  <button class="side-dot" data-ra="1" onclick="jumpTo('ra1')"></button>
+  <button class="side-dot" data-ra="2" onclick="jumpTo('ra2')"></button>
+  <button class="side-dot" data-ra="3" onclick="jumpTo('ra3')"></button>
+  <button class="side-dot" data-ra="4" onclick="jumpTo('ra4')"></button>
+  <button class="side-dot" data-ra="5" onclick="jumpTo('ra5')"></button>
+  <button class="side-dot" data-ra="6" onclick="jumpTo('ra6')"></button>
 </nav-side>
 
-<!-- NAV -->
 <nav>
-  <span class="nav-logo">DIGITAL</span>
+  <span class="nav-logo">DIGIT<em>AL</em></span>
   <div class="nav-links">
     <a href="#ra1" class="nav-a na1">RA1 · Digitalización</a>
     <a href="#ra2" class="nav-a na2">RA2 · THD</a>
@@ -656,937 +360,614 @@ footer {
   </div>
 </nav>
 
-<!-- HERO -->
+<div id="presenter-bar">
+  <div class="pb-section"><span class="pb-tag" id="pb-tag">INICIO</span><span class="pb-title" id="pb-title">Digitalización · Guion Completo</span></div>
+  <div class="pb-dots">
+    <button class="pb-dot active" data-s="0" onclick="jumpTo('hero')"></button>
+    <button class="pb-dot" data-s="1" onclick="jumpTo('ra1')"></button>
+    <button class="pb-dot" data-s="2" onclick="jumpTo('ra2')"></button>
+    <button class="pb-dot" data-s="3" onclick="jumpTo('ra3')"></button>
+    <button class="pb-dot" data-s="4" onclick="jumpTo('ra4')"></button>
+    <button class="pb-dot" data-s="5" onclick="jumpTo('ra5')"></button>
+    <button class="pb-dot" data-s="6" onclick="jumpTo('ra6')"></button>
+  </div>
+</div>
+
+<!-- ══════════ HERO ══════════ -->
 <section class="hero" id="hero" data-section="0">
-  <div class="hero-orb orb1"></div>
-  <div class="hero-orb orb2"></div>
-  <div class="hero-orb orb3"></div>
-  <span class="hero-badge">✦ Asignatura · ASIR · 2024/25</span>
-  <h1 class="hero-h1">DIGITALIZACIÓN</h1>
-  <h2 class="hero-h2">Infografía Interactiva</h2>
-  <p class="hero-desc">Repaso completo de los 6 Resultados de Aprendizaje. Navega por cada RA o desplázate para explorar todos los contenidos.</p>
+  <div class="hero-orb orb1"></div><div class="hero-orb orb2"></div><div class="hero-orb orb3"></div>
+  <span class="hero-badge">✦ Asignatura · ASIR · 2026</span>
+  <h1 class="hero-h1">DIGITALIZA<span class="hl">CIÓN</span></h1>
+  <h2 class="hero-h2">Guion Completo y Detallado</h2>
+  <p class="hero-author">por <strong>Jeremy Rodriguez Arteaga</strong> · IES Las Galletas</p>
+  <p class="hero-desc">Todo el temario estructurado para facilitar la lectura, el estudio y la exposición técnica, sin perder ningún concepto clave.</p>
   <div class="hero-pills">
-    <a href="#ra1" class="hp hp1">RA1</a>
-    <a href="#ra2" class="hp hp2">RA2</a>
-    <a href="#ra3" class="hp hp3">RA3</a>
-    <a href="#ra4" class="hp hp4">RA4</a>
-    <a href="#ra5" class="hp hp5">RA5</a>
-    <a href="#ra6" class="hp hp6">RA6</a>
+    <a href="#ra1" class="hp hp1">RA1</a><a href="#ra2" class="hp hp2">RA2</a><a href="#ra3" class="hp hp3">RA3</a>
+    <a href="#ra4" class="hp hp4">RA4</a><a href="#ra5" class="hp hp5">RA5</a><a href="#ra6" class="hp hp6">RA6</a>
   </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-arrow"></div>
-  </div>
+  <div class="scroll-hint"><span>Desliza</span><div class="scroll-arrow"></div></div>
 </section>
 
-<div class="sep"></div>
-
-<!-- ══════════════════════════════════════ -->
-<!-- RA1 — Digitalización, IT/OT, ODS      -->
-<!-- ══════════════════════════════════════ -->
+<!-- ══════════ RA1 ══════════ -->
 <section class="ra-section" id="ra1" data-section="1">
+  <div class="ra-glow ra-glow-a"></div><div class="ra-glow ra-glow-b"></div>
   <div class="bg-num" style="color:var(--lime)">RA1</div>
   <div class="ra-inner">
-
     <div class="s-header rev">
       <span class="s-tag" style="background:var(--lime)">RA1</span>
       <h2 class="s-title">Digitalización,<br>IT/OT &amp; Sostenibilidad</h2>
-      <p class="s-sub">De la información analógica a la transformación total del modelo de negocio. Conectando el mundo físico con el digital.</p>
     </div>
 
-    <!-- SUBSECCIÓN 1: LAS 3 FASES -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Las 3 Fases de la Era Digital</span>
-      <div class="sub-div-line"></div>
-    </div>
-
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">1. La Evolución de la Digitalización</span><div class="sub-div-line"></div></div>
     <div class="flow rev d1">
-      <div class="flow-step">
+      <div class="flow-step accent-lime">
         <span class="fs-ico">📋</span>
-        <div class="fs-h" style="color:var(--lime)">Informatización</div>
-        <div class="fs-p">Convertir información analógica a digital. De papel a bases de datos.</div>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--lime)">Informatización (Digitization)</div>
+          <div class="fs-p">Es el proceso de pasar la información o los datos físicos a formato digital. <strong>Por ejemplo:</strong> en lugar de usar un cuaderno para anotar la información de los clientes, utilizamos hojas de cálculo en Excel para guardar esos datos.</div>
+        </div>
       </div>
-      <div class="flow-arr">→</div>
-      <div class="flow-step">
+      <div class="flow-step accent-lime">
         <span class="fs-ico">⚙️</span>
-        <div class="fs-h" style="color:var(--lime)">Digitalización</div>
-        <div class="fs-p">Usar tecnología para mejorar y automatizar procesos existentes.</div>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--lime)">Digitalización (Digitalization)</div>
+          <div class="fs-p">Es el proceso de incorporar nuevas tecnologías en tu trabajo para facilitar y optimizar los procesos. <strong>Por ejemplo:</strong> en lugar de revisar las hojas de Excel manualmente para comprobar el stock, utilizamos una aplicación que automatiza y registra las reservas del inventario en tiempo real.</div>
+        </div>
       </div>
-      <div class="flow-arr">→</div>
-      <div class="flow-step">
+      <div class="flow-step accent-lime">
         <span class="fs-ico">🚀</span>
-        <div class="fs-h" style="color:var(--lime)">Transformación Digital</div>
-        <div class="fs-p">Cambio total de mentalidad y modelo de negocio apoyado en tecnología.</div>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--lime)">Transformación Digital</div>
+          <div class="fs-p">Es el proceso mediante el cual se abandona el entorno físico para aplicar las nuevas tecnologías y generar un cambio total en el modelo de negocio. <strong>Por ejemplo:</strong> Netflix pasó de ser un videoclub físico a transformar su estrategia por completo, convirtiéndose en una plataforma multimedia online que opera exclusivamente desde la nube.</div>
+        </div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 2: IT vs OT -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">IT vs OT — Diferencias y Ventajas de su Integración</span>
-      <div class="sub-div-line"></div>
-    </div>
-
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">2. Diferencia entre IT y OT</span><div class="sub-div-line"></div></div>
     <div class="cmp rev d2">
-      <div class="cmp-side accent-lime bg-accent-lime">
-        <div class="cmp-title" style="color:var(--lime)">🖥️ IT</div>
+      <div class="cmp-side bg-accent-lime accent-lime">
+        <div class="cmp-title" style="color:var(--lime)">🖥️ IT (Tecnología de la Información)</div>
         <ul class="cmp-list">
-          <li><span>📡</span>Procesamiento de datos corporativos</li>
-          <li><span>🗄️</span>Servidores, redes, bases de datos</li>
-          <li><span>💼</span>Software empresarial (CRM, ERP)</li>
-          <li><span>📊</span>Facilita la toma de decisiones</li>
-          <li><span>🏢</span>Entorno: Oficina / Negocio</li>
+          <li><span>📡</span>Es la parte digital que maneja los datos, los números y la información de los clientes o procesos.</li>
+          <li><span>💼</span><strong>Ejemplo en supermercado:</strong> Los programas que gestionan los datos, el software de las cajas registradoras o la página web corporativa.</li>
         </ul>
       </div>
-      <div class="cmp-side accent-lime bg-accent-lime">
-        <div class="cmp-title" style="color:var(--lime)">🏭 OT</div>
+      <div class="cmp-side bg-accent-lime accent-lime">
+        <div class="cmp-title" style="color:var(--lime)">🏭 OT (Tecnología de la Operación)</div>
         <ul class="cmp-list">
-          <li><span>🔧</span>Monitoriza procesos físicos e industriales</li>
-          <li><span>⚙️</span>Maquinaria, sensores, actuadores</li>
-          <li><span>🛡️</span>Garantiza seguridad operacional</li>
-          <li><span>⚡</span>Funcionamiento sin interrupciones</li>
-          <li><span>🏗️</span>Entorno: Fábrica / Planta</li>
+          <li><span>🔧</span>Es la parte centrada en el trabajo físico y la maquinaria.</li>
+          <li><span>⚙️</span><strong>Ejemplo en supermercado:</strong> Los elementos físicos, como las neveras industriales, las puertas corredizas o las cintas transportadoras.</li>
         </ul>
       </div>
     </div>
-
-    <div class="g3 rev d3" style="margin-top:18px">
-      <div class="card accent-lime" style="grid-column: span 3; display:flex; gap:20px; flex-wrap:wrap">
-        <div style="flex:1; min-width:180px">
-          <span class="card-ico">⚡</span>
-          <div class="card-lbl" style="color:var(--lime)">Ventaja IT+OT</div>
-          <div class="card-h">Eficiencia Operativa</div>
-          <div class="card-p">La información fluye automáticamente desde la maquinaria hasta los sistemas de gestión, eliminando trabajo manual.</div>
-        </div>
-        <div style="flex:1; min-width:180px">
-          <span class="card-ico">📡</span>
-          <div class="card-lbl" style="color:var(--lime)">Ventaja IT+OT</div>
-          <div class="card-h">Datos en Tiempo Real</div>
-          <div class="card-p">Estado de la producción y rendimiento de máquinas visible desde oficina en cualquier momento.</div>
-        </div>
-        <div style="flex:1; min-width:180px">
-          <span class="card-ico">🤖</span>
-          <div class="card-lbl" style="color:var(--lime)">Ventaja IT+OT</div>
-          <div class="card-h">Automatización Inteligente</div>
-          <div class="card-p">Mantenimiento predictivo: el sistema detecta fallos y propone soluciones sin supervisión humana.</div>
-        </div>
-      </div>
+    <div class="card rev d3 accent-lime" style="margin-top:20px">
+      <span class="card-ico">⚡</span>
+      <div class="card-lbl" style="color:var(--lime)">El poder de la integración</div>
+      <div class="card-h">Las ventajas de conectar IT + OT</div>
+      <div class="card-p">Antes de integrar estas dos tecnologías, muchos procesos debían vigilarse de forma manual. Sin embargo, al combinar ambos mundos, logramos automatizar funciones críticas. <br><br><strong>Por ejemplo:</strong> usamos la OT mediante sensores para medir la temperatura de las neveras. Si una empieza a fallar, el sistema se apoya en la IT para analizar ese dato y enviar automáticamente una advertencia indicando que el motor de la nevera en un local específico está averiado.</div>
     </div>
 
-    <!-- SUBSECCIÓN 3: ECONOMÍA CIRCULAR Y SOSTENIBILIDAD -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Economía Circular y Sostenibilidad</span>
-      <div class="sub-div-line"></div>
-    </div>
-
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">3. Economía Circular y Sostenibilidad</span><div class="sub-div-line"></div></div>
     <div class="cmp rev d4">
       <div class="cmp-side bg-accent-orange accent-orange">
         <div class="cmp-title" style="color:#ff6d38">📉 Economía Lineal</div>
         <ul class="cmp-list">
-          <li><span>🏭</span>Fabricar → Usar → Tirar</li>
-          <li><span>♻️</span>Sin reutilización de recursos</li>
-          <li><span>🌍</span>Agota recursos naturales rápidamente</li>
-          <li><span>🗑️</span>Genera residuos no gestionados</li>
+          <li><span>🏭</span>Basada en fabricar, usar y tirar.</li>
+          <li><span>🌍</span>Agota los recursos rápidamente.</li>
+          <li><span>📱</span><strong>Ejemplo:</strong> Comprar un móvil, usarlo un tiempo breve y tirarlo a la basura para comprar uno nuevo.</li>
         </ul>
       </div>
       <div class="cmp-side bg-accent-lime accent-lime">
         <div class="cmp-title" style="color:var(--lime)">🔄 Economía Circular</div>
         <ul class="cmp-list">
-          <li><span>⬇️</span>Reducir el consumo de recursos</li>
-          <li><span>🔁</span>Reutilizar materiales y componentes</li>
-          <li><span>♻️</span>Reciclar al final del ciclo de vida</li>
-          <li><span>🌱</span>Componentes duran mucho más tiempo</li>
+          <li><span>♻️</span>La idea principal es reducir, reutilizar y reciclar los recursos.</li>
+          <li><span>🔧</span><strong>Ejemplo:</strong> Diseñar móviles modulares fáciles de reparar y, al final de su vida, reutilizar sus piezas para ensamblar otros.</li>
         </ul>
       </div>
     </div>
-
-    <div class="g2 rev d5" style="margin-top:16px">
+    <div class="g2 rev d5" style="margin-top:20px">
       <div class="card accent-orange">
-        <span class="card-ico">🌡️</span>
-        <div class="card-lbl" style="color:#ff6d38">Impacto negativo</div>
-        <div class="card-h">Huella Digital</div>
-        <div class="card-p">Los Data Centers consumen enormes cantidades de electricidad para funcionar y enfriarse. Los dispositivos obsoletos generan residuos electrónicos.</div>
+        <span class="card-ico">🔥</span><div class="card-lbl" style="color:#ff6d38">El lado negativo</div><div class="card-h">La Huella Digital</div>
+        <div class="card-p">Existe un consumo energético real para poder almacenar datos (como los centros de datos de IA), además de un gran gasto de agua para refrigerarlos. También se genera contaminación por la rápida obsolescencia (basura electrónica).</div>
       </div>
       <div class="card accent-lime">
-        <span class="card-ico">🌿</span>
-        <div class="card-lbl" style="color:var(--lime)">Impacto positivo</div>
-        <div class="card-h">Digitalización Sostenible</div>
-        <div class="card-p">Monitorización constante de consumos, automatización que evita errores, menos residuos de materias primas y energía ahorrada.</div>
+        <span class="card-ico">🌿</span><div class="card-lbl" style="color:var(--lime)">El lado positivo</div><div class="card-h">La Optimización</div>
+        <div class="card-p">Nos permite reducir el consumo innecesario mediante la monitorización: controlando el gasto de luz, optimizando el rendimiento de la maquinaria y evitando tirar materiales que aún son valiosos.</div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 4: ODS -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">ODS — Objetivos de Desarrollo Sostenible</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="ods-wrap rev d6" style="margin-top:0">
-      <div class="ods-grid">
-        <div class="ods-c">
-          <span class="ods-num" style="color:var(--orange)">9</span>
-          <span class="ods-name">Industria &amp; Infraestructura</span>
-          <p class="ods-txt">La unión IT+OT crea industrias más modernas, eficientes y seguras.</p>
-        </div>
-        <div class="ods-c">
-          <span class="ods-num" style="color:var(--blue)">11</span>
-          <span class="ods-name">Ciudades Sostenibles</span>
-          <p class="ods-txt">Sensores IoT para movilidad inteligente, alumbrado y gestión de residuos.</p>
-        </div>
-        <div class="ods-c">
-          <span class="ods-num" style="color:var(--gold)">12</span>
-          <span class="ods-name">Consumo Responsable</span>
-          <p class="ods-txt">Control de inventarios, optimización de recursos, evitar sobreproducción.</p>
-        </div>
-        <div class="ods-c">
-          <span class="ods-num" style="color:var(--emerald)">13</span>
-          <span class="ods-name">Acción por el Clima</span>
-          <p class="ods-txt">Medir consumos y emisiones CO₂, optimizar procesos para reducir impacto.</p>
-        </div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">4. Los ODS Integrados</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d6">
+      <div class="card" style="border-color:rgba(255,109,56,.3)">
+        <div class="card-lbl" style="color:var(--orange)">ODS 9</div><div class="card-h">Industria e Infraestructura</div>
+        <div class="card-p">Gracias a la integración del IT y el OT, podemos transformar fábricas viejas en industrias modernas, inteligentes y eficientes.</div>
+      </div>
+      <div class="card" style="border-color:rgba(71,139,255,.3)">
+        <div class="card-lbl" style="color:var(--blue)">ODS 11</div><div class="card-h">Ciudades Sostenibles</div>
+        <div class="card-p">Llevamos la tecnología a la calle. Ejemplo: sensores en los semáforos para evitar atascos, o farolas que se encienden únicamente al detectar peatones.</div>
+      </div>
+      <div class="card" style="border-color:rgba(255,196,18,.3)">
+        <div class="card-lbl" style="color:var(--gold)">ODS 12</div><div class="card-h">Consumo Responsable</div>
+        <div class="card-p">La digitalización nos ayuda a predecir la demanda, evitando así la sobreproducción y reduciendo drásticamente los residuos industriales.</div>
+      </div>
+      <div class="card" style="border-color:rgba(0,166,82,.3)">
+        <div class="card-lbl" style="color:var(--emerald)">ODS 13</div><div class="card-h">Acción por el Clima</div>
+        <div class="card-p">La tecnología nos permite medir con exactitud nuestra huella de carbono y las emisiones de CO₂, facilitando su control y reducción.</div>
       </div>
     </div>
-
   </div>
 </section>
 
-<div class="sep"></div>
-
-<!-- ══════════════════════════════════════ -->
-<!-- RA2 — THD                             -->
-<!-- ══════════════════════════════════════ -->
-<section class="ra-section" id="ra2" data-section="2" style="background:rgba(122,120,255,0.03)">
+<!-- ══════════ RA2 ══════════ -->
+<section class="ra-section" id="ra2" data-section="2" style="background:rgba(122,120,255,.015)">
+  <div class="ra-glow ra-glow-a"></div><div class="ra-glow ra-glow-b"></div>
   <div class="bg-num" style="color:var(--amethyst)">RA2</div>
   <div class="ra-inner">
-
     <div class="s-header rev">
-      <span class="s-tag" style="background:var(--amethyst); color:var(--ghost)">RA2</span>
-      <h2 class="s-title">Tecnologías<br>Habilitadoras Digitales</h2>
-      <p class="s-sub">El motor de la transformación digital. Conectan el mundo físico con el entorno digital creando sistemas automatizados e inteligentes.</p>
+      <span class="s-tag" style="background:var(--amethyst);color:var(--ghost)">RA2</span>
+      <h2 class="s-title">Tecnologías Habilitadoras<br>Digitales (THD)</h2>
     </div>
 
-    <!-- SUBSECCIÓN 1: QUÉ SON LAS THD -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Principales THD en el Entorno ASIR</span>
-      <div class="sub-div-line"></div>
+    <div class="card rev d1 accent-amethyst bg-accent-amethyst">
+      <span class="card-ico">🏗️</span>
+      <div class="card-lbl" style="color:var(--amethyst)">1. Concepto y Analogía</div><div class="card-h">¿Qué son las THD y por qué son el motor?</div>
+      <div class="card-p">Durante la transformación digital de un proceso, necesitamos herramientas tecnológicas que nos permitan llevar a cabo ese cambio. Estas herramientas se conocen como THD. <br><br><strong>La analogía del edificio:</strong> Si la transformación digital fuera el proceso de construir un edificio, las THD serían las grúas, el hormigón y los taladros que nos permiten levantarlo de forma real y efectiva.</div>
     </div>
 
-    <div class="tech-grid rev d1">
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">2. Principales THD (Explicadas)</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d2">
       <div class="card accent-amethyst">
-        <span class="card-ico">📡</span>
-        <div class="card-h">IoT</div>
-        <div class="card-p">Sensores conectados que captan datos físicos en tiempo real</div>
+        <span class="card-ico">📡</span><div class="card-h">IoT (Internet de las Cosas)</div>
+        <div class="card-p">Sensores conectados a internet que recogen y envían información en tiempo real. <strong>Por ejemplo:</strong> sensores de humedad en un cultivo que activan aspersores solo cuando es necesario.</div>
       </div>
       <div class="card accent-amethyst">
-        <span class="card-ico">🤖</span>
-        <div class="card-h">Inteligencia Artificial</div>
-        <div class="card-p">Analiza datos y toma decisiones de forma autónoma</div>
+        <span class="card-ico">📊</span><div class="card-h">Big Data</div>
+        <div class="card-p">Sistemas para almacenar, procesar y analizar volúmenes gigantescos de datos. <strong>Por ejemplo:</strong> el sistema de Netflix guardando historiales para recomendar series.</div>
       </div>
       <div class="card accent-amethyst">
-        <span class="card-ico">📊</span>
-        <div class="card-h">Big Data</div>
-        <div class="card-p">Almacenamiento masivo de millones de datos por segundo</div>
+        <span class="card-ico">🤖</span><div class="card-h">Inteligencia Artificial (IA)</div>
+        <div class="card-p">Sistemas informáticos diseñados para aprender de los datos, tomar decisiones y realizar tareas de forma completamente automática.</div>
       </div>
       <div class="card accent-amethyst">
-        <span class="card-ico">🦾</span>
-        <div class="card-h">Robótica</div>
-        <div class="card-p">Automatiza tareas físicas repetitivas o peligrosas</div>
+        <span class="card-ico">🦾</span><div class="card-h">Robótica</div>
+        <div class="card-p">Máquinas diseñadas para ejecutar tareas físicas en el mundo real, como los brazos ensambladores en cadenas de producción de vehículos.</div>
       </div>
       <div class="card accent-amethyst">
-        <span class="card-ico">📶</span>
-        <div class="card-h">5G</div>
-        <div class="card-p">Red ultrarrápida con latencia casi nula para comunicación instantánea</div>
+        <span class="card-ico">👓</span><div class="card-h">Realidad Virtual y Aumentada</div>
+        <div class="card-p">La VR te sumerge en un mundo cerrado. La AR superpone datos al mundo real (Ej: un mecánico viendo datos flotantes sobre un motor real).</div>
       </div>
       <div class="card accent-amethyst">
-        <span class="card-ico">🔗</span>
-        <div class="card-h">Blockchain</div>
-        <div class="card-p">Base de datos descentralizada, inmutable y segura</div>
-      </div>
-      <div class="card accent-amethyst">
-        <span class="card-ico">🖨️</span>
-        <div class="card-h">Impresión 3D</div>
-        <div class="card-p">Fabricación de piezas por capas, sin desperdicios</div>
-      </div>
-      <div class="card accent-amethyst">
-        <span class="card-ico">🛡️</span>
-        <div class="card-h">Ciberseguridad</div>
-        <div class="card-p">Protege datos e infraestructura frente a ataques</div>
+        <span class="card-ico">🔗</span><div class="card-h">Blockchain, 3D, 5G y Ciberseguridad</div>
+        <div class="card-p"><strong>Blockchain:</strong> BD inmutable. <strong>Impresión 3D:</strong> Fabricar por capas. <strong>5G:</strong> Red sin latencia. <strong>Ciberseguridad:</strong> Barreras para proteger todos estos datos.</div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 2: IMPACTO EMPRESARIAL -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Impacto de las THD en la Empresa</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="g3 rev d3">
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">3. Impacto de las THD en la Empresa</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d3">
       <div class="card accent-amethyst">
-        <span class="card-ico">🏭</span>
-        <div class="card-lbl" style="color:var(--amethyst)">IT + OT</div>
-        <div class="card-h">Productos Inteligentes</div>
-        <div class="card-p">De fabricar productos tradicionales a productos que recopilan datos sobre su propio uso gracias al IoT y Big Data.</div>
+        <div class="card-lbl" style="color:var(--amethyst)">Transformación del producto</div><div class="card-h">Mejora de productos y servicios</div>
+        <div class="card-p">Pasamos de vender objetos "tontos" a dispositivos "inteligentes". Ejemplo: antes vendías un reloj de agujas; ahora un smartwatch que monitoriza pulsaciones.</div>
       </div>
       <div class="card accent-amethyst">
-        <span class="card-ico">💼</span>
-        <div class="card-lbl" style="color:var(--amethyst)">Negocio</div>
-        <div class="card-h">Nuevos Mercados</div>
-        <div class="card-p">Servitización: cobrar por horas de uso de una máquina en lugar de venderla. Surgen perfiles como Analistas de Datos o Arquitectos Cloud.</div>
+        <div class="card-lbl" style="color:var(--amethyst)">Transformación del modelo</div><div class="card-h">Nuevos Mercados (Servitización)</div>
+        <div class="card-p">La tecnología permite vender servicios en vez de productos. Ejemplo: Michelin ya no vende neumáticos, instala sensores IoT y cobra "por kilómetro recorrido".</div>
       </div>
-      <div class="card accent-amethyst">
-        <span class="card-ico">⚡</span>
-        <div class="card-lbl" style="color:var(--amethyst)">Planta</div>
-        <div class="card-h">Cadena Autónoma</div>
-        <div class="card-p">Sensores IoT + 5G + Robótica: montaje funcionando de forma autónoma, coordinada y segura, detectando errores en milisegundos.</div>
+      <div class="card accent-amethyst" style="grid-column: 1 / -1">
+        <div class="card-lbl" style="color:var(--amethyst)">Aplicación Dual</div><div class="card-h">Impacto en Empleos y entornos IT/OT</div>
+        <div class="card-p">El trabajo se transforma (se contratan Expertos Cloud o en Big Data). <br><strong>En IT (Oficina):</strong> Usamos Big Data para campañas de marketing ultra personalizadas. <br><strong>En OT (Fábrica):</strong> Usamos robótica e IoT para cadenas de montaje sin errores.</div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 3: ODS RA2 -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">ODS — Objetivos de Desarrollo Sostenible</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="ods-wrap rev d5" style="margin-top:0">
-      <div class="ods-grid">
-        <div class="ods-c" style="border-color:rgba(255,109,56,0.2)">
-          <span class="ods-num" style="color:var(--orange)">9</span>
-          <span class="ods-name">Innovación e Industria</span>
-          <p class="ods-txt">IoT, robótica e IA modernizan fábricas tradicionales hacia la Industria 4.0.</p>
-        </div>
-        <div class="ods-c" style="border-color:rgba(255,196,18,0.2)">
-          <span class="ods-num" style="color:var(--gold)">12</span>
-          <span class="ods-name">Producción Responsable</span>
-          <p class="ods-txt">Big Data + IoT = mantenimiento predictivo, consumo eficiente, sin desperdicios.</p>
-        </div>
-        <div class="ods-c" style="border-color:rgba(0,166,82,0.2)">
-          <span class="ods-num" style="color:var(--emerald)">13</span>
-          <span class="ods-name">Acción por el Clima</span>
-          <p class="ods-txt">IA y Big Data optimizan energía y ayudan a medir la huella de carbono con exactitud.</p>
-        </div>
-        <div class="ods-c" style="border-color:rgba(71,139,255,0.2)">
-          <span class="ods-num" style="color:var(--blue)">11</span>
-          <span class="ods-name">Ciudades Sostenibles</span>
-          <p class="ods-txt">IoT + 5G + AR hacen posible Smart Cities, domótica sostenible y movilidad inteligente.</p>
-        </div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">4. Los ODS Integrados mediante las THD</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d4">
+      <div class="card" style="border-color:rgba(255,109,56,.3)">
+        <div class="card-lbl" style="color:var(--orange)">ODS 9</div><div class="card-h">Industria e Innovación</div>
+        <div class="card-p">Al introducir Robótica, IoT y 5G en una fábrica antigua, la convertimos automáticamente en una industria moderna, conectada y segura.</div>
+      </div>
+      <div class="card" style="border-color:rgba(255,196,18,.3)">
+        <div class="card-lbl" style="color:var(--gold)">ODS 12</div><div class="card-h">Producción Responsable</div>
+        <div class="card-p">La unión del Big Data y el IoT logra el <strong>"mantenimiento predictivo"</strong>. Como avisan antes de romperse, se reparan, alargan su vida útil y reducen residuos.</div>
+      </div>
+      <div class="card" style="border-color:rgba(0,166,82,.3)">
+        <div class="card-lbl" style="color:var(--emerald)">ODS 13</div><div class="card-h">Acción por el Clima</div>
+        <div class="card-p">Usamos Inteligencia Artificial para analizar el gasto. Esta IA puede apagar luces o regular el aire acondicionado de forma 100% autónoma.</div>
+      </div>
+      <div class="card" style="border-color:rgba(71,139,255,.3)">
+        <div class="card-lbl" style="color:var(--blue)">ODS 11</div><div class="card-h">Ciudades Sostenibles</div>
+        <div class="card-p">IoT y 5G en las calles logran semáforos inteligentes, edificios con domótica que ahorran calefacción y mejoran la vida ciudadana.</div>
       </div>
     </div>
-
   </div>
 </section>
 
-<div class="sep"></div>
-
-<!-- ══════════════════════════════════════ -->
-<!-- RA3 — Cloud Computing                 -->
-<!-- ══════════════════════════════════════ -->
+<!-- ══════════ RA3 ══════════ -->
 <section class="ra-section" id="ra3" data-section="3">
+  <div class="ra-glow ra-glow-a"></div><div class="ra-glow ra-glow-b"></div>
   <div class="bg-num" style="color:var(--blue)">RA3</div>
   <div class="ra-inner">
-
     <div class="s-header rev">
-      <span class="s-tag" style="background:var(--blue); color:var(--ghost)">RA3</span>
+      <span class="s-tag" style="background:var(--blue);color:var(--ghost)">RA3</span>
       <h2 class="s-title">Cloud Computing<br>&amp; Sistemas Conectados</h2>
-      <p class="s-sub">Servicios de computación a través de internet. Sin servidores locales, sin límites. Escalable, disponible y seguro.</p>
     </div>
 
-    <!-- SUBSECCIÓN 1: MODELOS DE SERVICIO -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Modelos de Servicio en la Nube</span>
-      <div class="sub-div-line"></div>
+    <div class="card rev d1 accent-blue bg-accent-blue">
+      <span class="card-ico">☁️</span>
+      <div class="card-lbl" style="color:var(--blue)">1. Definición Principal</div><div class="card-h">¿Qué es el Cloud Computing (La Nube)?</div>
+      <div class="card-p">En lugar de comprar hardware costoso y montar una infraestructura compleja físicamente en la empresa, utilizamos el Cloud Computing. Es una forma de trabajar donde agrupamos múltiples recursos físicos (memoria, discos duros y procesadores) para crear un entorno virtual. Esto nos permite llevar todo nuestro trabajo y servicios a la red, eliminando la necesidad de depender de equipos locales dentro de la oficina.</div>
     </div>
 
-    <div class="g3 rev d1">
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">2. Modelos de Servicio en la Nube</span><div class="sub-div-line"></div></div>
+    <div class="proj-steps rev d2">
+      <div class="ps accent-blue">
+        <div class="ps-num" style="color:var(--blue)">01</div>
+        <div class="ps-body">
+          <div class="ps-title">IaaS (Infraestructura como Servicio)</div>
+          <div class="ps-text">El proveedor solo te alquila los recursos informáticos básicos: CPU, RAM, almacenamiento y redes. <br><br><strong>Ejemplo:</strong> Es como si te alquilaran la cocina y el horno de una pizzería; tú tienes que traer los ingredientes, cocinar la pizza y luego limpiar. <em>Ejemplo real: Amazon Web Services (AWS).</em></div>
+        </div>
+      </div>
+      <div class="ps accent-blue">
+        <div class="ps-num" style="color:var(--blue)">02</div>
+        <div class="ps-body">
+          <div class="ps-title">PaaS (Plataforma como Servicio)</div>
+          <div class="ps-text">Aquí, el proveedor no solo te da la infraestructura física, sino que te entrega un entorno completo con el sistema operativo y las herramientas listas para que puedas desarrollar tus aplicaciones.<br><br><strong>Ejemplo:</strong> Sería como si te dieran la masa de la pizza ya preparada; tú solo tienes que añadir tus ingredientes y meterla al horno. <em>Ejemplo real: Google App Engine.</em></div>
+        </div>
+      </div>
+      <div class="ps accent-blue">
+        <div class="ps-num" style="color:var(--blue)">03</div>
+        <div class="ps-body">
+          <div class="ps-title">SaaS (Software como Servicio)</div>
+          <div class="ps-text">Está pensado para el usuario final. El proveedor se encarga de absolutamente todo (alojar, mantener y proteger). El cliente no tiene que hacer nada, solo usar la herramienta.<br><br><strong>Ejemplo:</strong> Es como ir a una pizzería, pedir una pizza, comértela y disfrutar. <em>Ejemplo real: El correo de Gmail.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">3. Tipos de Nube</span><div class="sub-div-line"></div></div>
+    <div class="g3 rev d3">
       <div class="card accent-blue">
-        <span class="card-ico">🖥️</span>
-        <div class="card-lbl" style="color:var(--blue)">Modelo de servicio</div>
-        <div class="card-h">IaaS</div>
-        <div class="card-p"><strong style="color:var(--blue)">Infraestructura como Servicio.</strong> El proveedor alquila hardware virtualizado. El técnico instala lo que necesite. Control total. Ideal para arquitecturas propias.</div>
+        <span class="card-ico">🌐</span><div class="card-h">Nube Pública</div>
+        <div class="card-p">La infraestructura es propiedad de una gran empresa (como Amazon o Google) y se comparte con otros usuarios en internet.</div>
       </div>
       <div class="card accent-blue">
-        <span class="card-ico">🧩</span>
-        <div class="card-lbl" style="color:var(--blue)">Modelo de servicio</div>
-        <div class="card-h">PaaS</div>
-        <div class="card-p"><strong style="color:var(--blue)">Plataforma como Servicio.</strong> Entorno completo listo para desarrollar. Incluye SO y bases de datos. Pensado para programadores.</div>
+        <span class="card-ico">🔒</span><div class="card-h">Nube Privada</div>
+        <div class="card-p">El servidor y el entorno son de uso exclusivo para la empresa. Funciona de manera local o dedicada, ofreciendo máxima privacidad.</div>
       </div>
       <div class="card accent-blue">
-        <span class="card-ico">🌐</span>
-        <div class="card-lbl" style="color:var(--blue)">Modelo de servicio</div>
-        <div class="card-h">SaaS</div>
-        <div class="card-p"><strong style="color:var(--blue)">Software como Servicio.</strong> Solo necesitas un navegador. El proveedor gestiona todo. Ejemplos: Gmail, Microsoft 365.</div>
+        <span class="card-ico">🔀</span><div class="card-h">Nube Híbrida</div>
+        <div class="card-p">Usa la nube privada para guardar los procesos confidenciales (contraseñas, dinero) y la pública para tareas de cara al público (la web).</div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 2: TIPOS DE NUBE -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Tipos de Nube — Modelos de Despliegue</span>
-      <div class="sub-div-line"></div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">4. Jerarquía (Edge, Fog, Mist) — Acercando el cerebro a la máquina</span><div class="sub-div-line"></div></div>
+    <div class="card rev d4 accent-blue" style="margin-bottom:20px">
+      <div class="card-p">Uno de los principales problemas tradicionales de la nube es la <strong>latencia (el retraso)</strong>, ya que los centros de datos están a miles de kilómetros. Para solucionarlo, creamos "pequeños cerebros" más cerca de las máquinas:</div>
     </div>
-
-    <div class="g3 rev d2">
-      <div class="card bg-accent-blue accent-blue">
-        <span class="card-ico">☁️</span>
-        <div class="card-lbl" style="color:var(--blue)">Tipo</div>
-        <div class="card-h">Nube Pública</div>
-        <div class="card-p">AWS, Azure, Google Cloud. Recursos compartidos entre empresas. Económica, sin mantenimiento propio.</div>
+    <div class="flow rev d5">
+      <div class="flow-step accent-blue">
+        <span class="fs-ico">🔬</span><div class="fs-content"><div class="fs-h" style="color:var(--blue)">Mist Computing (El sensor)</div><div class="fs-p">Pegado al sistema físico. El propio sensor tiene inteligencia básica. <strong>Ejemplo:</strong> Si nota que el motor arde, decide apagarlo al instante sin preguntar.</div></div>
       </div>
-      <div class="card bg-accent-blue accent-blue">
-        <span class="card-ico">🔒</span>
-        <div class="card-lbl" style="color:var(--blue)">Tipo</div>
-        <div class="card-h">Nube Privada</div>
-        <div class="card-p">Infraestructura dedicada exclusivamente a una organización. Máxima privacidad, control y seguridad sobre los datos.</div>
+      <div class="flow-step accent-blue">
+        <span class="fs-ico">📦</span><div class="fs-content"><div class="fs-h" style="color:var(--blue)">Edge Computing (Al lado)</div><div class="fs-p">Ordenador a pocos metros de la máquina. Recibe datos y realiza tomas de decisiones rapidísimas sin necesidad de comunicarse con internet.</div></div>
       </div>
-      <div class="card bg-accent-blue accent-blue">
-        <span class="card-ico">🔀</span>
-        <div class="card-lbl" style="color:var(--blue)">Tipo</div>
-        <div class="card-h">Nube Híbrida</div>
-        <div class="card-p">Datos críticos en nube privada + picos de demanda en pública. Lo mejor de ambos mundos.</div>
+      <div class="flow-step accent-blue">
+        <span class="fs-ico">🌫️</span><div class="fs-content"><div class="fs-h" style="color:var(--blue)">Fog Computing (El router)</div><div class="fs-p">Recibe millones de datos de las máquinas, filtra la "basura" y envía a la nube principal únicamente la información valiosa.</div></div>
+      </div>
+      <div class="flow-step accent-blue">
+        <span class="fs-ico">☁️</span><div class="fs-content"><div class="fs-h" style="color:var(--blue)">Cloud Computing (Lejos)</div><div class="fs-p">A miles de kilómetros. Se utiliza para tareas sin prisas, como almacenar el historial de datos de años y analizarlo profundamente.</div></div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 3: JERARQUÍA DE PROCESAMIENTO -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Jerarquía de Procesamiento — Edge, Fog y Mist</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="rev d3">
-      <div class="pyramid-wrap">
-        <div class="pl pl-w4" style="background:var(--blue); color:var(--midnight)">
-          <div class="pl-title">☁️ Cloud Computing</div>
-          <div class="pl-sub" style="color:rgba(20,20,20,0.65)">Miles de km · Procesamiento masivo e histórico</div>
-        </div>
-        <div class="pl pl-w3" style="background:rgba(71,139,255,0.25); border:1.5px solid rgba(71,139,255,0.4)">
-          <div class="pl-title">🌫️ Fog Computing</div>
-          <div class="pl-sub">Router/Gateway local · Filtrado intermedio de datos</div>
-        </div>
-        <div class="pl pl-w2" style="background:rgba(71,139,255,0.12); border:1.5px solid rgba(71,139,255,0.25)">
-          <div class="pl-title">📦 Edge Computing</div>
-          <div class="pl-sub">Dispositivo cercano · Decisiones en tiempo real</div>
-        </div>
-        <div class="pl pl-w1" style="background:rgba(71,139,255,0.06); border:1.5px solid rgba(71,139,255,0.15)">
-          <div class="pl-title">🔬 Mist Computing</div>
-          <div class="pl-sub">Dentro del propio sensor · Cálculo básico en el chip</div>
-        </div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">5. Las 4 Ventajas de la Nube</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d6">
+      <div class="card accent-blue">
+        <span class="card-ico">📈</span><div class="card-h">Escalabilidad</div>
+        <div class="card-p">Podemos "estirar o encoger" los recursos informáticos. <strong>Por ejemplo:</strong> alquilar más servidores de forma temporal en el Black Friday y luego reducirlos.</div>
+      </div>
+      <div class="card accent-blue">
+        <span class="card-ico">🌍</span><div class="card-h">Alta Disponibilidad</div>
+        <div class="card-p">Asegura que los servicios funcionen casi al 100%, sin fallos. <strong>Por ejemplo:</strong> vital para que los sistemas de los aeropuertos no fallen jamás.</div>
+      </div>
+      <div class="card accent-blue">
+        <span class="card-ico">💰</span><div class="card-h">Reducción de Costes</div>
+        <div class="card-p">Al alquilar, la empresa no gasta grandes cantidades de dinero en comprar, mantener y refrigerar infraestructuras físicas.</div>
+      </div>
+      <div class="card accent-blue">
+        <span class="card-ico">🛡️</span><div class="card-h">Seguridad Avanzada</div>
+        <div class="card-p">Aunque estén en internet, los proveedores ofrecen barreras de protección de primer nivel mundial para mantener la infraestructura segura.</div>
       </div>
     </div>
-
-    <!-- SUBSECCIÓN 4: VENTAJAS DEL CLOUD -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Ventajas del Cloud Computing</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="g4 rev d4">
-      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
-        <span class="card-ico">📈</span>
-        <div class="card-h">Escalabilidad</div>
-        <div class="card-p">Añade servidores con un clic. Crece en Black Friday, reduce en enero.</div>
-      </div>
-      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
-        <span class="card-ico">🌍</span>
-        <div class="card-h">Alta Disponibilidad</div>
-        <div class="card-p">Infraestructura replicada globalmente. Acceso 24/7 desde cualquier lugar.</div>
-      </div>
-      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
-        <span class="card-ico">💰</span>
-        <div class="card-h">Reducción de Costes</div>
-        <div class="card-p">De CAPEX a OPEX. Pagas solo lo que consumes, sin servidores obsoletos.</div>
-      </div>
-      <div class="card" style="border-color:rgba(71,139,255,0.3); text-align:center">
-        <span class="card-ico">🛡️</span>
-        <div class="card-h">Seguridad Avanzada</div>
-        <div class="card-p">Backups automáticos, cifrado, 2FA y planes de recuperación ante desastres.</div>
-      </div>
-    </div>
-
   </div>
 </section>
 
-<div class="sep"></div>
-
-<!-- ══════════════════════════════════════ -->
-<!-- RA4 — Inteligencia Artificial         -->
-<!-- ══════════════════════════════════════ -->
-<section class="ra-section" id="ra4" data-section="4" style="background:rgba(255,109,56,0.03)">
+<!-- ══════════ RA4 ══════════ -->
+<section class="ra-section" id="ra4" data-section="4" style="background:rgba(255,109,56,.015)">
+  <div class="ra-glow ra-glow-a"></div><div class="ra-glow ra-glow-b"></div>
   <div class="bg-num" style="color:var(--orange)">RA4</div>
   <div class="ra-inner">
-
     <div class="s-header rev">
-      <span class="s-tag" style="background:var(--orange); color:var(--ghost)">RA4</span>
+      <span class="s-tag" style="background:var(--orange);color:var(--ghost)">RA4</span>
       <h2 class="s-title">Inteligencia Artificial<br>&amp; Automatización</h2>
-      <p class="s-sub">Sistemas capaces de razonar, aprender y tomar decisiones. El cerebro de la transformación digital.</p>
     </div>
 
-    <!-- SUBSECCIÓN 1: ECOSISTEMA IA -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">IA, Machine Learning y Deep Learning — El Ecosistema</span>
-      <div class="sub-div-line"></div>
+    <div class="card rev d1 accent-orange bg-accent-orange">
+      <span class="card-ico">🤖</span>
+      <div class="card-lbl" style="color:var(--orange)">1. Definición Principal</div><div class="card-h">¿Qué es la IA y para qué se usa?</div>
+      <div class="card-p">La Inteligencia Artificial (IA) es una rama de la informática dirigida a crear sistemas capaces de realizar tareas que tradicionalmente requieren inteligencia humana (razonamiento, aprendizaje y toma de decisiones). Se utiliza para automatizar procesos, analizar enormes datos y tomar decisiones autónomas.<br><br><strong>Ejemplo sencillo:</strong> Google Maps utiliza IA. Con solo fijar un destino, calcula la ruta óptima en segundos y te muestra datos en tiempo real sobre atascos.</div>
     </div>
 
-    <div class="ai-eco rev d1">
-      <div class="ai-ring ai-r1" style="background:rgba(255,109,56,0.06); border:1.5px solid rgba(255,109,56,0.2)">
-        <div class="ai-ring-title" style="color:var(--orange)">🌊 Big Data — El Combustible</div>
-        <div class="ai-ring-sub">Inmensa cantidad de datos en bruto que la IA necesita para aprender y operar</div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">2. IA, Big Data, Machine y Deep Learning (Como un estudiante)</span><div class="sub-div-line"></div></div>
+    <div class="flow rev d2">
+      <div class="flow-step accent-orange">
+        <span class="fs-ico">🤖</span>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--orange)">Inteligencia Artificial (IA)</div>
+          <div class="fs-p">Es el campo general que abarca cualquier técnica diseñada para que una máquina se comporte de manera inteligente. <strong>(Es la meta final).</strong></div>
+        </div>
       </div>
-      <div class="ai-ring ai-r2" style="background:rgba(255,109,56,0.1); border:1.5px solid rgba(255,109,56,0.3)">
-        <div class="ai-ring-title" style="color:var(--orange)">🤖 Inteligencia Artificial</div>
-        <div class="ai-ring-sub">Campo que engloba técnicas para imitar el comportamiento humano</div>
+      <div class="flow-step accent-orange">
+        <span class="fs-ico">🌊</span>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--orange)">Big Data</div>
+          <div class="fs-p">La inmensa cantidad de datos en bruto. <strong>(Es como si el estudiante fuera a una gran biblioteca llena de libros; es la fuente de información).</strong></div>
+        </div>
       </div>
-      <div class="ai-ring ai-r3" style="background:rgba(255,109,56,0.15); border:1.5px solid rgba(255,109,56,0.4)">
-        <div class="ai-ring-title" style="color:var(--orange)">📚 Machine Learning</div>
-        <div class="ai-ring-sub">Algoritmos que aprenden de datos por sí solos, sin programación explícita</div>
+      <div class="flow-step accent-orange">
+        <span class="fs-ico">📚</span>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--orange)">Machine Learning (Aprendizaje Automático)</div>
+          <div class="fs-p">Es el proceso que utiliza algoritmos para que la IA "estudie" y aprenda de los datos (Big Data) de manera autónoma, sin programarle reglas estrictas para cada tarea. <strong>(Es el método de estudio).</strong></div>
+        </div>
       </div>
-      <div class="ai-ring ai-r3" style="background:rgba(255,109,56,0.20); border:1.5px solid rgba(255,109,56,0.5)">
-        <div class="ai-ring-title" style="color:var(--orange)">🧠 Deep Learning</div>
-        <div class="ai-ring-sub">Redes neuronales multicapa. Reconocimiento facial, traducción, conducción autónoma</div>
-      </div>
-    </div>
-
-    <!-- SUBSECCIÓN 2: LENGUAJES -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Lenguajes de Programación en IA</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="card rev d2" style="border-color:rgba(255,109,56,0.25)">
-      <div class="card-lbl" style="color:var(--orange)">Herramientas del desarrollador IA</div>
-      <div class="card-h">Los 5 Lenguajes Clave</div>
-      <div class="langs">
-        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">🐍 Python <span style="opacity:0.7; font-size:11px">— Rey de la IA · TensorFlow, PyTorch</span></div>
-        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">📊 R <span style="opacity:0.7; font-size:11px">— Estadística y modelos matemáticos</span></div>
-        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">☕ Java <span style="opacity:0.7; font-size:11px">— Empresas, seguridad, portabilidad</span></div>
-        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">⚡ C++ <span style="opacity:0.7; font-size:11px">— Máxima velocidad, robótica</span></div>
-        <div class="lang-chip" style="border-color:var(--orange); color:var(--orange)">🔬 Julia <span style="opacity:0.7; font-size:11px">— Computación científica de alto rendimiento</span></div>
+      <div class="flow-step accent-orange">
+        <span class="fs-ico">🧠</span>
+        <div class="fs-content">
+          <div class="fs-h" style="color:var(--orange)">Deep Learning (Aprendizaje Profundo)</div>
+          <div class="fs-p">Evolución avanzada del Machine Learning. Emula las redes neuronales del cerebro humano para resolver problemas muchísimo más complejos. <strong>(Ejemplo: el sistema visual del Tesla).</strong></div>
+        </div>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 3: CASOS PRÁCTICOS ASIR -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Casos Prácticos de IA en el Entorno ASIR</span>
-      <div class="sub-div-line"></div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">3. Importancia de la IA en Empresas y Sectores IT</span><div class="sub-div-line"></div></div>
+    <div class="card rev d3 accent-orange" style="margin-bottom:20px">
+      <div class="card-p">La IA supone un cambio radical: permite evolucionar de un <strong>modelo reactivo</strong> (esperar a que ocurra un problema para actuar) a un <strong>modelo predictivo</strong> (adelantarse al futuro basándose en datos).</div>
     </div>
-
-    <div class="g2 rev d3">
-      <div class="card accent-orange">
-        <span class="card-ico">⚖️</span>
-        <div class="card-lbl" style="color:var(--orange)">Automatización</div>
-        <div class="card-h">Balanceo &amp; Despliegue</div>
-        <div class="card-p">Scripts inteligentes que balancean la carga de servidores automáticamente y despliegan máquinas virtuales según la demanda.</div>
-      </div>
-      <div class="card accent-orange">
-        <span class="card-ico">🔍</span>
-        <div class="card-lbl" style="color:var(--orange)">Predictivo</div>
-        <div class="card-h">Detección de Fallos</div>
-        <div class="card-p">Analiza el estado del hardware constantemente. Avisa si un disco duro va a fallar antes de que el sistema caiga.</div>
-      </div>
-      <div class="card accent-orange">
-        <span class="card-ico">💬</span>
-        <div class="card-lbl" style="color:var(--orange)">Soporte</div>
-        <div class="card-h">Helpdesk Inteligente</div>
-        <div class="card-p">Chatbots que resuelven incidencias de Nivel 1 (contraseñas, conectividad) y derivan a técnicos solo los casos complejos.</div>
-      </div>
-      <div class="card accent-orange">
-        <span class="card-ico">🔐</span>
-        <div class="card-lbl" style="color:var(--orange)">Seguridad</div>
-        <div class="card-h">Análisis de Red</div>
-        <div class="card-p">Monitoriza tráfico en tiempo real. Si detecta anomalías a las 3 AM (DDoS, intrusión), bloquea la amenaza al instante.</div>
-      </div>
-    </div>
-
-    <!-- SUBSECCIÓN 4: IMPACTO EMPRESARIAL -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Importancia de la IA en Empresa y Sector IT</span>
-      <div class="sub-div-line"></div>
-    </div>
-
     <div class="cmp rev d4">
       <div class="cmp-side bg-accent-orange accent-orange">
-        <div class="cmp-title" style="color:var(--orange)">En la Empresa</div>
+        <div class="cmp-title" style="color:var(--orange)">En la Empresa (Negocio)</div>
         <ul class="cmp-list">
-          <li><span>🎯</span>De modelo reactivo a modelo predictivo</li>
-          <li><span>👤</span>Hiperpersonalización de la experiencia del cliente</li>
-          <li><span>💸</span>Reducción de costes operativos</li>
-          <li><span>📈</span>Predicción de tendencias de mercado</li>
+          <li><span>🎯</span>Predecir el comportamiento de clientes y escenarios.</li>
+          <li><span>👕</span><strong>Por ejemplo:</strong> predecir las próximas tendencias de moda analizando de forma masiva información en redes.</li>
         </ul>
       </div>
       <div class="cmp-side bg-accent-orange accent-orange">
-        <div class="cmp-title" style="color:var(--orange)">En el Sector IT</div>
+        <div class="cmp-title" style="color:var(--orange)">En el Sector IT (Tecnología)</div>
         <ul class="cmp-list">
-          <li><span>☁️</span>Gestión dinámica de arquitecturas cloud</li>
-          <li><span>📡</span>Optimización del ancho de banda</li>
-          <li><span>📋</span>Procesado masivo de logs de sistema</li>
-          <li><span>🛡️</span>Ciberseguridad activa e inteligente</li>
+          <li><span>🕵️</span>Vital para encontrar errores en datos gigantescos.</li>
+          <li><span>💳</span><strong>Por ejemplo:</strong> un banco usa IA para auditar transacciones al instante y detectar estafas, trabajo que a humanos les costaría años.</li>
         </ul>
       </div>
     </div>
 
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">4. Lenguajes de Programación usados en IA</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d5">
+      <div class="card accent-orange"><span class="card-ico">🐍</span><div class="card-h">Python</div><div class="card-p">Es el más utilizado del mundo en este campo gracias a su sintaxis clara y fácil de entender, además de contar con potentes bibliotecas exclusivas.</div></div>
+      <div class="card accent-orange"><span class="card-ico">📊</span><div class="card-h">R</div><div class="card-p">Lenguaje enfocado en el análisis estadístico y la visualización de datos. Muy utilizado en el sector científico.</div></div>
+      <div class="card accent-orange"><span class="card-ico">⚡</span><div class="card-h">C++</div><div class="card-p">Elegido cuando se necesita que la IA reaccione a máxima velocidad, sin latencia (utilizado en coches autónomos y videojuegos).</div></div>
+      <div class="card accent-orange"><span class="card-ico">☕</span><div class="card-h">Java</div><div class="card-p">Muy utilizado por corporaciones para crear sistemas de IA robustos e integrables en la infraestructura general de la empresa.</div></div>
+    </div>
+
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">5. Casos Prácticos de IA en el entorno ASIR</span><div class="sub-div-line"></div></div>
+    <div class="g2 rev d6">
+      <div class="card accent-orange"><span class="card-ico">⚖️</span><div class="card-lbl" style="color:var(--orange)">Automatización</div><div class="card-h">Tareas operativas</div><div class="card-p">Elimina el trabajo manual pesado. Ejemplo: una IA que despliega servidores clonados si el servicio principal se cae.</div></div>
+      <div class="card accent-orange"><span class="card-ico">🔍</span><div class="card-lbl" style="color:var(--orange)">Detección</div><div class="card-h">Detección de fallos</div><div class="card-p">Sistemas inteligentes monitorizan la salud de infraestructuras inmensas para diagnosticar averías en la red antes de que caigan.</div></div>
+      <div class="card accent-orange"><span class="card-ico">💬</span><div class="card-lbl" style="color:var(--orange)">Soporte técnico</div><div class="card-h">Chatbots inteligentes</div><div class="card-p">Integración de asistentes virtuales que resuelven las incidencias y dudas de los empleados de forma instantánea.</div></div>
+      <div class="card accent-orange"><span class="card-ico">🔐</span><div class="card-lbl" style="color:var(--orange)">Análisis</div><div class="card-h">Análisis de seguridad</div><div class="card-p">IA que vigila el tráfico de red las 24h, identificando al segundo cualquier comportamiento anómalo o ciberataque.</div></div>
+    </div>
   </div>
 </section>
 
-<div class="sep"></div>
-
-<!-- ══════════════════════════════════════ -->
-<!-- RA5 — Datos y Ciberseguridad          -->
-<!-- ══════════════════════════════════════ -->
+<!-- ══════════ RA5 ══════════ -->
 <section class="ra-section" id="ra5" data-section="5">
+  <div class="ra-glow ra-glow-a"></div><div class="ra-glow ra-glow-b"></div>
   <div class="bg-num" style="color:var(--gold)">RA5</div>
   <div class="ra-inner">
-
     <div class="s-header rev">
       <span class="s-tag" style="background:var(--gold)">RA5</span>
       <h2 class="s-title">Datos &amp; Ciberseguridad<br>en la Economía Digital</h2>
-      <p class="s-sub">El dato es el nuevo petróleo. Aprende a gestionarlo, protegerlo y cumplir la normativa.</p>
     </div>
 
-    <!-- SUBSECCIÓN 1: DATO VS INFORMACIÓN -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Dato vs Información — Diferencia Fundamental</span>
-      <div class="sub-div-line"></div>
-    </div>
-
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">1. Diferencia entre Dato e Información</span><div class="sub-div-line"></div></div>
     <div class="cmp rev d1">
       <div class="cmp-side bg-accent-gold accent-gold" style="text-align:center">
-        <div class="cmp-title" style="color:var(--gold)">📌 Dato</div>
-        <div style="font-family:var(--font-d); font-size:72px; line-height:1; letter-spacing:-0.04em; color:var(--gold); margin:16px 0">35</div>
+        <div class="cmp-title" style="color:var(--gold)">📌 El Dato</div>
+        <div style="font-family:var(--fd);font-size:72px;line-height:1;letter-spacing:-.04em;color:var(--gold);margin:16px 0">39</div>
         <ul class="cmp-list" style="text-align:left">
-          <li><span>⚡</span>Unidad mínima, en bruto</li>
-          <li><span>🔤</span>Sin contexto ni significado propio</li>
-          <li><span>🧱</span>Materia prima del sistema</li>
-          <li><span>📍</span>Ejemplo: "35" o "Madrid"</li>
+          <li><span>⚡</span>Son elementos aislados y en bruto.</li>
+          <li><span>🔤</span>Por sí solos, no tienen ninguna utilidad sin contexto.</li>
+          <li><span>📍</span>El simple número "39" no sirve de nada por sí solo.</li>
         </ul>
       </div>
       <div class="cmp-side bg-accent-gold accent-gold" style="text-align:center">
-        <div class="cmp-title" style="color:var(--gold)">💡 Información</div>
-        <div style="font-family:var(--font-d); font-size:32px; line-height:1.1; letter-spacing:-0.03em; color:var(--gold); margin:16px 0">"En Madrid<br>hace 35°C"</div>
+        <div class="cmp-title" style="color:var(--gold)">💡 La Información</div>
+        <div style="font-family:var(--fd);font-size:32px;line-height:1.1;letter-spacing:-.03em;color:var(--gold);margin:16px 0">"El paciente tiene<br>39°C de fiebre"</div>
         <ul class="cmp-list" style="text-align:left">
-          <li><span>✅</span>Datos organizados y contextualizados</li>
-          <li><span>🎯</span>Tiene significado y utilidad</li>
-          <li><span>🏁</span>Permite tomar decisiones</li>
-          <li><span>📊</span>Producto final del procesamiento</li>
+          <li><span>✅</span>Resultado de agrupar y dar contexto a los datos.</li>
+          <li><span>🎯</span>Aportan un valor real (actuar ante la fiebre).</li>
+          <li><span>📊</span>Nos permiten tomar decisiones estratégicas.</li>
         </ul>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 2: CICLO DE VIDA -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Ciclo de Vida del Dato</span>
-      <div class="sub-div-line"></div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">2. El Ciclo de Vida del Dato</span><div class="sub-div-line"></div></div>
+    <div class="proj-steps rev d2">
+      <div class="ps accent-gold"><div class="ps-num" style="color:var(--gold)">01</div><div class="ps-body"><div class="ps-title">Captura</div><div class="ps-text">El momento en el que se recopilan los datos. <strong>Por ejemplo:</strong> cuando un cliente rellena un formulario de registro.</div></div></div>
+      <div class="ps accent-gold"><div class="ps-num" style="color:var(--gold)">02</div><div class="ps-body"><div class="ps-title">Almacenamiento</div><div class="ps-text">Donde se guardan de manera estructurada y segura. <strong>Por ejemplo:</strong> la base de datos que almacena los correos.</div></div></div>
+      <div class="ps accent-gold"><div class="ps-num" style="color:var(--gold)">03</div><div class="ps-body"><div class="ps-title">Procesamiento</div><div class="ps-text">Fase donde los datos en bruto se limpian, organizan y transforman en algo útil.</div></div></div>
+      <div class="ps accent-gold"><div class="ps-num" style="color:var(--gold)">04</div><div class="ps-body"><div class="ps-title">Uso / Distribución</div><div class="ps-text">Se muestra de forma visual a los responsables para que puedan tomar decisiones estratégicas.</div></div></div>
+      <div class="ps accent-gold"><div class="ps-num" style="color:var(--gold)">05</div><div class="ps-body"><div class="ps-title">Eliminación</div><div class="ps-text">Cuando los datos no son útiles o caduca su retención legal, se destruyen permanentemente.</div></div></div>
     </div>
 
-    <div class="flow rev d2">
-      <div class="flow-step accent-gold">
-        <span class="fs-ico">📥</span>
-        <div class="fs-h" style="color:var(--gold)">Captura</div>
-        <div class="fs-p">Sensores IoT, formularios, registros de servidores</div>
-      </div>
-      <div class="flow-arr">→</div>
-      <div class="flow-step accent-gold">
-        <span class="fs-ico">💾</span>
-        <div class="fs-h" style="color:var(--gold)">Almacenamiento</div>
-        <div class="fs-p">Servidores locales, bases de datos o nube</div>
-      </div>
-      <div class="flow-arr">→</div>
-      <div class="flow-step accent-gold">
-        <span class="fs-ico">⚙️</span>
-        <div class="fs-h" style="color:var(--gold)">Procesamiento</div>
-        <div class="fs-p">Limpiar, clasificar y transformar los datos</div>
-      </div>
-      <div class="flow-arr">→</div>
-      <div class="flow-step accent-gold">
-        <span class="fs-ico">📊</span>
-        <div class="fs-h" style="color:var(--gold)">Uso</div>
-        <div class="fs-p">Dashboards para análisis y toma de decisiones</div>
-      </div>
-      <div class="flow-arr">→</div>
-      <div class="flow-step" style="border-color:rgba(255,196,18,0.35)">
-        <span class="fs-ico">🗑️</span>
-        <div class="fs-h" style="color:var(--gold)">Archivado / Borrado</div>
-        <div class="fs-p">Retención legal o destrucción segura</div>
-      </div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">3. Las 5 "V" del Big Data</span><div class="sub-div-line"></div></div>
+    <div class="g3 rev d3">
+      <div class="card accent-gold"><span class="card-ico">📦</span><div class="card-h">Volumen</div><div class="card-p">La inmensa y masiva cantidad de información que se almacena diariamente.</div></div>
+      <div class="card accent-gold"><span class="card-ico">⚡</span><div class="card-h">Velocidad</div><div class="card-p">El ritmo vertiginoso al que se generan. El análisis se exige prácticamente en tiempo real.</div></div>
+      <div class="card accent-gold"><span class="card-ico">🔄</span><div class="card-h">Variedad</div><div class="card-p">Ya no son solo tablas ordenadas. Provienen de vídeos, audios, sensores o redes sociales.</div></div>
+      <div class="card accent-gold"><span class="card-ico">✅</span><div class="card-h">Veracidad</div><div class="card-p">Fiabilidad, exactitud y la limpieza de los datos que han sido recopilados.</div></div>
+      <div class="card accent-gold"><span class="card-ico">💎</span><div class="card-h">Valor</div><div class="card-p">El objetivo final: el uso para obtener un beneficio real (económico o estratégico).</div></div>
     </div>
 
-    <!-- SUBSECCIÓN 3: LAS 5 Vs -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Las 5 V's del Big Data</span>
-      <div class="sub-div-line"></div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">4. Almacenamiento Seguro en la Nube</span><div class="sub-div-line"></div></div>
+    <div class="g3 rev d4">
+      <div class="card accent-gold bg-accent-gold"><span class="card-ico">🔏</span><div class="card-h">Cifrado (Encriptado)</div><div class="card-p">Convierte los datos en texto ilegible mediante algoritmos. Si roban la información, no se puede leer sin la clave.</div></div>
+      <div class="card accent-gold bg-accent-gold"><span class="card-ico">💾</span><div class="card-h">Redundancia y Backup</div><div class="card-p">Copias de seguridad constantes en diferentes servidores físicos, garantizando que la información nunca se pierda.</div></div>
+      <div class="card accent-gold bg-accent-gold"><span class="card-ico">🛂</span><div class="card-h">Control de Accesos</div><div class="card-p">Dar a cada empleado únicamente los permisos estrictamente necesarios para su trabajo ("mínimo privilegio").</div></div>
     </div>
 
-    <div class="vs-grid rev d3">
-      <div class="vc">
-        <span class="vc-l" style="color:var(--gold)">V</span>
-        <span class="vc-n">Volumen</span>
-        <p class="vc-t">Terabytes o Petabytes de información que no caben en un disco convencional</p>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">5. Conceptos Básicos de Ciberseguridad y Normativa RGPD</span><div class="sub-div-line"></div></div>
+    <div class="card rev d5 accent-gold" style="margin-bottom:20px">
+      <div class="card-p">La ciberseguridad protege sistemas, pero en Europa existe una estricta ley que obliga a las empresas a proteger los datos de clientes: el <strong>RGPD</strong>. Incumplirlo supone multas millonarias. Estas son las reglas de oro:</div>
+    </div>
+    <div class="g3 rev d6">
+      <div class="card accent-gold bg-accent-gold" style="text-align:center">
+        <span class="card-ico" style="font-family:var(--fd);font-size:70px;color:var(--gold)">C</span><div class="card-h">Consentimiento</div>
+        <div class="card-p"><strong>Explícito:</strong> No podemos recopilar, comprar ni usar datos sin el permiso claro y directo del usuario (Ej. las "Cookies").</div>
       </div>
-      <div class="vc">
-        <span class="vc-l" style="color:var(--gold)">V</span>
-        <span class="vc-n">Velocidad</span>
-        <p class="vc-t">Datos generados y procesados en tiempo real, sin esperas</p>
+      <div class="card accent-gold bg-accent-gold" style="text-align:center">
+        <span class="card-ico" style="font-family:var(--fd);font-size:70px;color:var(--gold)">O</span><div class="card-h">Olvido</div>
+        <div class="card-p"><strong>Derecho al Olvido:</strong> Cualquier usuario tiene el derecho legal de exigir que se eliminen de forma permanente sus datos.</div>
       </div>
-      <div class="vc">
-        <span class="vc-l" style="color:var(--gold)">V</span>
-        <span class="vc-n">Variedad</span>
-        <p class="vc-t">Tablas, vídeos, audios, sensores, redes sociales... estructurados y no estructurados</p>
-      </div>
-      <div class="vc">
-        <span class="vc-l" style="color:var(--gold)">V</span>
-        <span class="vc-n">Veracidad</span>
-        <p class="vc-t">Fiabilidad y calidad del dato. Datos erróneos = análisis incorrecto</p>
-      </div>
-      <div class="vc">
-        <span class="vc-l" style="color:var(--gold)">V</span>
-        <span class="vc-n">Valor</span>
-        <p class="vc-t">El objetivo final: extraer un beneficio real y estratégico del análisis</p>
+      <div class="card accent-gold bg-accent-gold" style="text-align:center">
+        <span class="card-ico" style="font-family:var(--fd);font-size:70px;color:var(--gold)">N</span><div class="card-h">Notificación</div>
+        <div class="card-p"><strong>De Brechas:</strong> La empresa está obligada por ley a reportar cualquier fuga o robo de datos a las autoridades en máx. 72 horas.</div>
       </div>
     </div>
-
-    <!-- SUBSECCIÓN 4: CID + RGPD -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Ciberseguridad — Tríada CID y Normativa RGPD</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="cid rev d4">
-      <div class="cid-c">
-        <span class="cid-letter" style="color:var(--gold)">C</span>
-        <div class="cid-name">Confidencialidad</div>
-        <p class="cid-p">Solo los usuarios autorizados pueden acceder a los datos. Control de accesos (RBAC) y autenticación 2FA.</p>
-      </div>
-      <div class="cid-c">
-        <span class="cid-letter" style="color:var(--gold)">I</span>
-        <div class="cid-name">Integridad</div>
-        <p class="cid-p">Nadie altera los datos sin autorización. Cifrado en tránsito y en reposo garantizan la integridad.</p>
-      </div>
-      <div class="cid-c">
-        <span class="cid-letter" style="color:var(--gold)">D</span>
-        <div class="cid-name">Disponibilidad</div>
-        <p class="cid-p">El sistema funciona siempre. Redundancia, backups y replicación en múltiples centros de datos.</p>
-      </div>
-    </div>
-
-    <div class="g2 rev d5" style="margin-top:18px">
-      <div class="card bg-accent-gold accent-gold">
-        <span class="card-ico">🔐</span>
-        <div class="card-lbl" style="color:var(--gold)">Almacenamiento Seguro</div>
-        <div class="card-h">Protección en la Nube</div>
-        <div class="card-p">Cifrado en tránsito y en reposo · Redundancia geográfica · Backups automáticos · Control RBAC con mínimos privilegios</div>
-      </div>
-      <div class="card bg-accent-gold accent-gold">
-        <span class="card-ico">⚖️</span>
-        <div class="card-lbl" style="color:var(--gold)">Normativa Europea</div>
-        <div class="card-h">RGPD</div>
-        <div class="card-p">✅ Consentimiento explícito del usuario · 🗑️ Derecho al olvido · ⚠️ Notificar brechas en 72h · 🏗️ Privacidad por diseño desde el inicio</div>
-      </div>
-    </div>
-
   </div>
 </section>
 
-<div class="sep"></div>
-
-<!-- ══════════════════════════════════════ -->
-<!-- RA6 — Proyecto Transformación Digital  -->
-<!-- ══════════════════════════════════════ -->
-<section class="ra-section" id="ra6" data-section="6" style="background:rgba(0,166,82,0.03)">
+<!-- ══════════ RA6 ══════════ -->
+<section class="ra-section" id="ra6" data-section="6" style="background:rgba(0,166,82,.015)">
+  <div class="ra-glow ra-glow-a"></div><div class="ra-glow ra-glow-b"></div>
   <div class="bg-num" style="color:var(--emerald)">RA6</div>
   <div class="ra-inner">
-
     <div class="s-header rev">
-      <span class="s-tag" style="background:var(--emerald); color:var(--ghost)">RA6</span>
-      <h2 class="s-title">Proyecto de<br>Transformación Digital</h2>
-      <p class="s-sub">Del diagnóstico al plan completo. Cómo analizar una empresa, detectar áreas a digitalizar y presentar un proyecto profesional.</p>
+      <span class="s-tag" style="background:var(--emerald);color:var(--ghost)">RA6</span>
+      <h2 class="s-title">Proyecto de Transformación<br>Digital</h2>
     </div>
 
-    <!-- SUBSECCIÓN 1: DIAGNÓSTICO, OBJETIVOS Y TECNOLOGÍAS -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Diagnóstico, Objetivos y Tecnologías Necesarias</span>
-      <div class="sub-div-line"></div>
+    <div class="card rev d1 accent-emerald bg-accent-emerald">
+      <span class="card-ico">🎯</span>
+      <div class="card-lbl" style="color:var(--emerald)">1. El inicio de todo</div><div class="card-h">Cómo analizar una empresa y detectar áreas a digitalizar</div>
+      <div class="card-p">Hay que tener claro que la tecnología debe implementarse para resolver un problema real y concreto. Si queremos digitalizar algo, debemos buscar los <strong>"cuellos de botella"</strong>, es decir, esos puntos donde el trabajo se vuelve lento o ineficiente. <br><br><strong>Ejemplo práctico:</strong> En un restaurante donde los camareros toman las notas en papel, se pierde muchísimo tiempo comunicando las comandas a la cocina. Al digitalizar, se utilizan tablets que envían los pedidos a la cocina de forma instantánea, agilizando el proceso.</div>
     </div>
 
-    <div class="g3 rev d1">
-      <div class="card accent-emerald">
-        <span class="card-ico">🔍</span>
-        <div class="card-lbl" style="color:var(--emerald)">Paso 1</div>
-        <div class="card-h">Diagnóstico AS-IS</div>
-        <div class="card-p">Fotografía actual de la empresa. Documentar hardware, software y procesos existentes. Detectar cuellos de botella, papel, errores humanos y silos.</div>
-      </div>
-      <div class="card accent-emerald">
-        <span class="card-ico">🎯</span>
-        <div class="card-lbl" style="color:var(--emerald)">Paso 2</div>
-        <div class="card-h">Objetivos SMART</div>
-        <div class="card-p">Claros y medibles. No "ordenadores nuevos", sino "reducir tiempo de facturación un 30%" o "eliminar papel en 6 meses".</div>
-      </div>
-      <div class="card accent-emerald">
-        <span class="card-ico">🛠️</span>
-        <div class="card-lbl" style="color:var(--emerald)">Paso 3</div>
-        <div class="card-h">Tecnologías Necesarias</div>
-        <div class="card-p">Elegir las THD más adecuadas: Cloud si hay pérdida de datos, IoT si falta control de máquinas, Big Data si el análisis es lento.</div>
-      </div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">2. Diagnóstico, Objetivos y Tecnologías Necesarias</span><div class="sub-div-line"></div></div>
+    <div class="g3 rev d2">
+      <div class="card accent-emerald"><span class="card-ico">🔍</span><div class="card-lbl" style="color:var(--emerald)">Pilar 1</div><div class="card-h">Diagnóstico</div><div class="card-p">Inventario exacto de lo que tiene la empresa (qué ordenadores, programas de software y problemas físicos existen) para detectar las carencias.</div></div>
+      <div class="card accent-emerald"><span class="card-ico">📊</span><div class="card-lbl" style="color:var(--emerald)">Pilar 2</div><div class="card-h">Objetivos</div><div class="card-p">Metas que se buscan cumplir con el proyecto. Siempre deben tener un respaldo numérico para medir si son realistas y si se están alcanzando.</div></div>
+      <div class="card accent-emerald"><span class="card-ico">🛠️</span><div class="card-lbl" style="color:var(--emerald)">Pilar 3</div><div class="card-h">Tecnología</div><div class="card-p">Una vez que conocemos el problema y los objetivos, elegimos qué solución técnica exacta vamos a utilizar para lograrlo.</div></div>
     </div>
 
-    <!-- SUBSECCIÓN 2: PLAN COMPLETO -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Plan de Digitalización Completo</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="proj-steps rev d3">
-      <div class="ps">
-        <div class="ps-num" style="color:var(--emerald)">01</div>
-        <div class="ps-body">
-          <div class="ps-title">Resumen Ejecutivo</div>
-          <div class="ps-text">Por qué la empresa necesita este cambio para sobrevivir en el mercado. Justificación estratégica clara para la dirección.</div>
-        </div>
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">3. Integración de Datos, Apps y Plataformas</span><div class="sub-div-line"></div></div>
+    <div class="cmp rev d3">
+      <div class="cmp-side bg-accent-emerald accent-emerald">
+        <div class="cmp-title" style="color:var(--emerald)">🚨 El Problema</div>
+        <ul class="cmp-list">
+          <li><span>🧱</span><strong>Silos de Información:</strong> Ocurre cuando distintos departamentos usan programas que no pueden comunicarse entre sí, provocando un gran aislamiento de datos.</li>
+        </ul>
       </div>
-      <div class="ps">
-        <div class="ps-num" style="color:var(--emerald)">02</div>
-        <div class="ps-body">
-          <div class="ps-title">Fases y Cronograma (Hoja de Ruta)</div>
-          <div class="ps-text">Qué departamentos se digitalizan primero y cuánto tiempo toma cada fase. Realista para no paralizar la empresa.</div>
-        </div>
-      </div>
-      <div class="ps">
-        <div class="ps-num" style="color:var(--emerald)">03</div>
-        <div class="ps-body">
-          <div class="ps-title">Presupuesto y ROI</div>
-          <div class="ps-text">Coste de hardware, software y licencias. Cuánto dinero ahorrará o ganará la empresa a largo plazo. Retorno de Inversión justificado.</div>
-        </div>
-      </div>
-      <div class="ps">
-        <div class="ps-num" style="color:var(--emerald)">04</div>
-        <div class="ps-body">
-          <div class="ps-title">Plan de Formación</div>
-          <div class="ps-text">Cómo capacitar a los trabajadores en las nuevas herramientas. El mayor riesgo de un proyecto no es técnico, es humano (resistencia al cambio).</div>
-        </div>
+      <div class="cmp-side bg-accent-emerald accent-emerald">
+        <div class="cmp-title" style="color:var(--emerald)">✅ Las Soluciones</div>
+        <ul class="cmp-list">
+          <li><span>🌉</span><strong>Las APIs:</strong> Sistemas que funcionan como "puentes", traduciendo y comunicando directamente dos programas diferentes.</li>
+          <li><span>🌐</span><strong>Sistemas ERP:</strong> Programas centralizados y robustos que engloban en una sola plataforma todas las herramientas de todos los departamentos.</li>
+        </ul>
       </div>
     </div>
 
-    <!-- SUBSECCIÓN 3: INTEGRACIÓN DE SISTEMAS -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Integración de Datos, Apps y Plataformas</span>
-      <div class="sub-div-line"></div>
-    </div>
-
-    <div class="card rev d5 accent-emerald bg-accent-emerald">
-      <div style="display:flex; gap:40px; flex-wrap:wrap; align-items:center">
-        <div style="flex:1; min-width:220px">
-          <span class="card-ico">🔗</span>
-          <div class="card-lbl" style="color:var(--emerald)">Integración</div>
-          <div class="card-h">Sin Silos de Información</div>
-          <div class="card-p">Nada sirve si los sistemas no se "hablan". Usar <strong style="color:var(--emerald)">APIs</strong> para comunicar aplicaciones distintas y sistemas <strong style="color:var(--emerald)">ERP</strong> centralizados que conecten planta y oficina.</div>
-        </div>
-        <div style="flex:1; min-width:220px; display:flex; align-items:center; justify-content:center; gap:16px">
-          <div style="text-align:center; padding:16px; border-radius:24px; border:1.5px solid rgba(0,166,82,0.3); background:rgba(0,166,82,0.06)">
-            <div style="font-size:28px">🏭</div>
-            <div style="font-family:var(--font-d); font-size:16px; color:var(--emerald); letter-spacing:-0.01em">OT (Planta)</div>
-          </div>
-          <div style="font-family:var(--font-d); font-size:24px; color:var(--emerald)">⇌ API ⇌</div>
-          <div style="text-align:center; padding:16px; border-radius:24px; border:1.5px solid rgba(0,166,82,0.3); background:rgba(0,166,82,0.06)">
-            <div style="font-size:28px">🏢</div>
-            <div style="font-family:var(--font-d); font-size:16px; color:var(--emerald); letter-spacing:-0.01em">IT (Oficina)</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SUBSECCIÓN 4: RIESGOS -->
-    <div class="sub-div rev">
-      <div class="sub-div-line"></div>
-      <span class="sub-div-label">Riesgos a Contemplar en el Plan</span>
-      <div class="sub-div-line"></div>
-    </div>
-
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">4. Riesgos y Necesidades Futuras</span><div class="sub-div-line"></div></div>
     <div class="g3 rev d4">
-      <div class="card accent-orange bg-accent-orange">
-        <span class="card-ico">💀</span>
-        <div class="card-lbl" style="color:#ff6d38">Riesgo crítico</div>
-        <div class="card-h">Brechas de Seguridad</div>
-        <div class="card-p">Al conectar toda la empresa, aumenta la superficie de ataque: virus, Ransomware, robo de datos. Obligatorio: auditorías, firewalls y backups.</div>
-      </div>
-      <div class="card accent-gold bg-accent-gold">
-        <span class="card-ico">😰</span>
-        <div class="card-lbl" style="color:var(--gold)">Riesgo humano</div>
-        <div class="card-h">Resistencia al Cambio</div>
-        <div class="card-p">El mayor riesgo no es técnico, es humano. Empleados pueden rechazar nueva tecnología por miedo o desconocimiento.</div>
-      </div>
-      <div class="card accent-emerald bg-accent-emerald">
-        <span class="card-ico">📐</span>
-        <div class="card-lbl" style="color:var(--emerald)">Visión futura</div>
-        <div class="card-h">Escalabilidad</div>
-        <div class="card-p">La tecnología se queda obsoleta rápido. Diseñar infraestructura escalable (Cloud) que permita crecer sin tirar todo y empezar de cero.</div>
-      </div>
+      <div class="card accent-emerald"><span class="card-ico">💀</span><div class="card-h">Brechas de seguridad</div><div class="card-p">Cualquier dispositivo conectado a internet es una puerta para virus. Para solucionarlo, configuramos cortafuegos (firewalls) y permisos escalables.</div></div>
+      <div class="card accent-emerald"><span class="card-ico">😰</span><div class="card-h">Resistencia al cambio</div><div class="card-p">El factor humano. Los empleados rechazan el uso de estas tecnologías por miedo a lo nuevo o por puro desconocimiento.</div></div>
+      <div class="card accent-emerald"><span class="card-ico">📐</span><div class="card-h">Escalabilidad futura</div><div class="card-p">La tecnología envejece rápido. Diseñar infraestructura escalable permite que la empresa pueda crecer sin que sus sistemas se queden atrás.</div></div>
     </div>
 
+    <div class="sub-div rev"><div class="sub-div-line"></div><span class="sub-div-label">5. Presentación de un Plan de Digitalización Completo</span><div class="sub-div-line"></div></div>
+    <div class="card rev d5 accent-emerald" style="margin-bottom:20px">
+      <div class="card-p">Para que una junta directiva apruebe un proyecto de esta magnitud, la presentación comercial debe incluir de forma obligatoria estos 4 puntos principales:</div>
+    </div>
+    <div class="proj-steps rev d6">
+      <div class="ps accent-emerald"><div class="ps-num" style="color:var(--emerald)">01</div><div class="ps-body"><div class="ps-title">Resumen Ejecutivo</div><div class="ps-text">Explicación clara, breve y directa de por qué es vital realizar estos cambios tecnológicos para que la empresa sobreviva y mejore.</div></div></div>
+      <div class="ps accent-emerald"><div class="ps-num" style="color:var(--emerald)">02</div><div class="ps-body"><div class="ps-title">Fases y Cronograma</div><div class="ps-text">Un calendario realista que detalle exactamente qué pasos se van a seguir para ejecutar la digitalización y cuánto tiempo durará cada fase.</div></div></div>
+      <div class="ps accent-emerald"><div class="ps-num" style="color:var(--emerald)">03</div><div class="ps-body"><div class="ps-title">Presupuesto y ROI (Retorno de Inversión)</div><div class="ps-text">Detallar el coste. Además, es fundamental incluir el ROI para demostrar a la directiva cuánto dinero va a ahorrar o a ganar a largo plazo con esta inversión.</div></div></div>
+      <div class="ps accent-emerald"><div class="ps-num" style="color:var(--emerald)">04</div><div class="ps-body"><div class="ps-title">Plan de Formación</div><div class="ps-text">Un apartado para explicar cómo se va a capacitar, acompañar y enseñar a los trabajadores a usar las nuevas tecnologías, venciendo la resistencia al cambio.</div></div></div>
+    </div>
   </div>
 </section>
-
-<div class="sep"></div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">DIGITALIZACIÓN</div>
-  <div class="footer-sub">Hecho por Jeremy Rodriguez Arteaga · IES Las Galletas</div>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-logo-wrap">DIGITALIZA<span class="fl">CIÓN</span></div>
+      <div>
+        <span class="footer-by">Presentado por</span>
+        <span class="footer-name">Jeremy Rodriguez Arteaga</span>
+        <span class="footer-school">IES Las Galletas · ASIR 2026</span>
+      </div>
+    </div>
+    <div class="footer-right">
+      <span class="footer-year">2026</span>
+      <div class="footer-copy">Infografía Interactiva<br>Todos los derechos reservados</div>
+    </div>
+  </div>
 </footer>
 
 <script>
-// ─── Scroll Progress ───────────────────
+const SECTIONS = ['hero','ra1','ra2','ra3','ra4','ra5','ra6'];
+const ACCENTS = { 0:['#c7ff69','199,255,105'], 1:['#c7ff69','199,255,105'], 2:['#7a78ff','122,120,255'], 3:['#478bff','71,139,255'], 4:['#ff6d38','255,109,56'], 5:['#ffc412','255,196,18'], 6:['#00a652','0,166,82'] };
+const LABELS = { 0:'INICIO',1:'RA1',2:'RA2',3:'RA3',4:'RA4',5:'RA5',6:'RA6' };
+const TITLES = { 0:'Digitalización · Guion Completo', 1:'Digitalización, IT/OT & Sostenibilidad', 2:'Tecnologías Habilitadoras Digitales', 3:'Cloud Computing & Sistemas Conectados', 4:'Inteligencia Artificial & Automatización', 5:'Datos, Big Data & Seguridad', 6:'Proyecto de Transformación Digital' };
+
+let currentSection = 0;
+const cur = document.getElementById('cursor'); const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+(function animRing(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+
 const bar = document.getElementById('progress-bar');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  bar.style.width = pct + '%';
+window.addEventListener('scroll', ()=>{ bar.style.width = (window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%'; }, {passive:true});
+
+const revEls = document.querySelectorAll('.rev');
+const revObs = new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }); },{threshold:.07, rootMargin:'0px 0px -40px 0px'});
+revEls.forEach(el=>revObs.observe(el));
+
+function applySection(idx){
+  if(idx===currentSection) return; currentSection=idx;
+  const [col,rgb]=ACCENTS[idx];
+  document.documentElement.style.setProperty('--accent',col); document.documentElement.style.setProperty('--accent-rgb',rgb);
+  document.querySelectorAll('.side-dot, .pb-dot').forEach(d=>d.classList.remove('active'));
+  let sd=document.querySelector(`.side-dot[data-ra="${idx}"]`); if(sd) sd.classList.add('active');
+  let pd=document.querySelector(`.pb-dot[data-s="${idx}"]`); if(pd) pd.classList.add('active');
+  document.getElementById('pb-tag').textContent=LABELS[idx]; document.getElementById('pb-title').textContent=TITLES[idx];
+}
+const secEls = document.querySelectorAll('[data-section]');
+const secObs = new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting) applySection(+e.target.dataset.section); }); },{threshold:.35});
+secEls.forEach(s=>secObs.observe(s));
+
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect(); const x=((e.clientX-r.left)/r.width-.5)*2; const y=((e.clientY-r.top)/r.height-.5)*2;
+    card.style.transform=`perspective(800px) rotateY(${x*4}deg) rotateX(${-y*4}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave',()=>{ card.style.transform=''; });
 });
 
-// ─── Reveal on scroll ──────────────────
-const revEls = document.querySelectorAll('.rev');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); }
-  });
-}, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
-revEls.forEach(el => observer.observe(el));
-
-// ─── Side dots & section tracking ──────
-const sections = document.querySelectorAll('[data-section]');
-const dots = document.querySelectorAll('.side-dot');
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const idx = e.target.dataset.section;
-      dots.forEach(d => d.classList.remove('active'));
-      const activeDot = document.querySelector(`.side-dot[data-ra="${idx}"]`);
-      if (activeDot) activeDot.classList.add('active');
-    }
-  });
-}, { threshold: 0.4 });
-sections.forEach(s => sectionObserver.observe(s));
-
-// ─── Smooth scroll helper ───────────────
-function scrollToId(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
-// El parallax del bg-num ha sido eliminado: el número es ahora estático y se mueve con el scroll normalmente.
+function jumpTo(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); }
+function navStep(dir){ const next=Math.min(Math.max(currentSection+dir,0),SECTIONS.length-1); jumpTo(SECTIONS[next]); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown') { navStep(1); }
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp') { navStep(-1); }
+  if(e.key==='Escape') jumpTo('hero');
+});
 </script>
 </body>
 </html>
